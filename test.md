@@ -24,7 +24,7 @@ PYTHONPATH=src pytest
 | Integration (vision pipeline) | dummy infer + reject | IMPLEMENTED (untrained) |
 | Field robustness | — | NOT STARTED (needs field images) |
 | Missing-data (risk) | weather writer records `missing_fields`; model tests later | NOT STARTED |
-| Failure handling | invalid image missing-file validator | PARTIAL |
+| Failure handling | invalid image missing-file validator + vision reject | PARTIAL |
 | Regression | pytest on each change | IN PROGRESS |
 | Performance / long-run | — | NOT STARTED (Phase 5) |
 | Final validation | — | NOT STARTED (Phase 6) |
