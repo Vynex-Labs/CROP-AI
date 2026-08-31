@@ -1,0 +1,28 @@
+# Maps PlantVillage folder names to CROP-AI class_id values.
+# Unmapped PV classes remain available as transfer-learning extras (keep_unmapped: true).
+keep_unmapped: true
+map:
+  "Corn_(maize)___Common_rust_": maize_common_rust
+  "Corn_(maize)___Northern_Leaf_Blight": maize_northern_leaf_blight
+  "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": maize_gray_leaf_spot
+  "Corn_(maize)___healthy": maize_healthy
+  "Soybean___healthy": soybean_healthy
+  "Tomato___Early_blight": tomato_early_blight
+  "Tomato___Late_blight": tomato_late_blight
+  "Tomato___Leaf_Mold": tomato_leaf_mold
+  "Tomato___Septoria_leaf_spot": tomato_septoria_leaf_spot
+  "Tomato___Bacterial_spot": tomato_bacterial_spot
+  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": tomato_yellow_leaf_curl
+  "Tomato___Tomato_mosaic_virus": tomato_mosaic_virus
+  "Tomato___Target_Spot": tomato_target_spot
+  "Tomato___Spider_mites Two-spotted_spider_mite": tomato_spider_mites
+  "Tomato___healthy": tomato_healthy
+  "Potato___Early_blight": potato_early_blight
+  "Potato___Late_blight": potato_late_blight
+  "Potato___healthy": potato_healthy
+  "Grape___Black_rot": grape_black_rot
+  "Grape___Esca_(Black_Measles)": grape_esca
+  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": grape_leaf_blight
+  "Grape___healthy": grape_healthy
+  "Pepper,_bell___Bacterial_spot": pepper_bacterial_spot
+  "Pepper,_bell___healthy": pepper_healthy

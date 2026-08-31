@@ -1,0 +1,225 @@
+# Dataset registry, split policy, and validation gates.
+# Paths are relative to repo root unless overridden by env CROP_AI_DATA_DIR.
+
+schema_version: "1.0.0"
+version: "v0.1.1-phase1"
+seed: 42
+
+paths:
+  root: data
+  raw: data/raw
+  processed: data/processed
+  splits: data/splits
+  synthetic: data/synthetic
+  manifests: data/manifests
+  field_protocol: data/field_protocol
+
+splits:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  # Isolation keys prevent leakage across farmer / location / video / session.
+  group_keys:
+    - farmer_id
+    - location_id
+    - video_id
+    - capture_session_id
+    - source_group
+  stratify_by:
+    - crop_id
+    - class_id
+    - is_field
+  min_group_size_for_split: 1
+  isolated_test: true
+
+validation:
+  min_width: 64
+  min_height: 64
+  max_width: 8192
+  max_height: 8192
+  allowed_image_suffixes: [".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"]
+  duplicate_hash: sha256
+  bbox_min_size_px: 2
+  mask_min_pixels: 4
+  lat_range: [-90.0, 90.0]
+  lon_range: [-180.0, 180.0]
+  maharashtra_bbox: [72.6, 15.6, 80.9, 22.1]  # lon_min, lat_min, lon_max, lat_max
+  require_synthetic_flag: true
+  fail_on_leakage: true
+  warn_imbalance_ratio: 10.0
+
+# Honest registry. "available_in_repo" is verified at runtime, never assumed.
+sources:
+  plantvillage:
+    id: plantvillage
+    kind: public_lab
+    task: classification
+    description: >
+      Hughes & Salathé / Mohanty et al. lab-captured leaf images, ~54k images,
+      38 classes, 14 crop species. Clean backgrounds. Not field-representative.
+    license: CC0-1.0
+    license_url: https://creativecommons.org/publicdomain/zero/1.0/
+    citation: >
+      Mohanty SP, Hughes DP, Salathé M. Using Deep Learning for Image-Based
+      Plant Disease Detection. Front Plant Sci. 2016.
+    urls:
+      github: https://github.com/spMohanty/PlantVillage-Dataset
+      mendeley: https://data.mendeley.com/datasets/tywbtsjrjv/1
+    expected_classes: 38
+    expected_images_approx: 54303
+    field_realism: low
+    adapter: plantvillage
+    local_dir: data/raw/plantvillage
+    status: registered_not_downloaded
+
+  plantdoc:
+    id: plantdoc
+    kind: public_field_scraped
+    task: classification_and_detection
+    description: >
+      Singh et al. 2019. ~2,598 in-the-wild images, 13 species, 27 classes.
+      Internet-scraped; some label noise. Useful for domain-shift evaluation,
+      not a Maharashtra field set.
+    license: research_use_verify_before_redistribution
+    license_url: https://github.com/pratikkumar-patel/PlantDoc-Dataset
+    citation: >
+      Singh D et al. PlantDoc: A Dataset for Visual Plant Disease Detection.
+      CODS-COMAD 2020. arXiv:1911.10317.
+    urls:
+      classification: https://github.com/pratikkumar-patel/PlantDoc-Dataset
+      detection: https://github.com/pratikkumar-patel/PlantDoc-Object-Detection-Dataset
+    expected_images_approx: 2598
+    field_realism: medium
+    adapter: plantdoc
+    local_dir: data/raw/plantdoc
+    status: registered_not_downloaded
+
+  fieldplant:
+    id: fieldplant
+    kind: public_field
+    task: detection_and_classification
+    description: >
+      Moupojou et al. 5,170 annotated field images from Cameroon plantations
+      (corn, cassava, tomato). Real field conditions, not Indian geography.
+    license: CC-BY-4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    citation: >
+      Moupojou E et al. FieldPlant: A Dataset of Field Plant Images for Plant
+      Disease Detection and Classification with Deep Learning. IEEE Access 2023.
+    expected_images_approx: 5170
+    field_realism: high
+    geography: Cameroon
+    adapter: fieldplant
+    local_dir: data/raw/fieldplant
+    status: registered_not_downloaded
+
+  ip102:
+    id: ip102
+    kind: public_mixed
+    task: pest_classification
+    description: >
+      Wu et al. IP102 — ~75k images, 102 insect pest species. Mixed quality,
+      long-tailed. Useful pest pretraining, not trap-count data.
+    license: research_use_verify_before_redistribution
+    citation: >
+      Wu X et al. IP102: A Large-Scale Benchmark Dataset for Insect Pest
+      Recognition. CVPR 2019.
+    urls:
+      github: https://github.com/xpwu95/IP102
+    expected_images_approx: 75000
+    expected_classes: 102
+    field_realism: mixed
+    adapter: ip102
+    local_dir: data/raw/ip102
+    status: registered_not_downloaded
+
+  nasa_power:
+    id: nasa_power
+    kind: public_weather
+    task: risk_features
+    description: NASA POWER agroclimatology (gridded). Not a farm AWS network.
+    license: public_nasa
+    url: https://power.larc.nasa.gov/
+    adapter: nasa_power
+    local_dir: data/raw/weather/nasa_power
+    status: registered_not_downloaded
+
+  open_meteo:
+    id: open_meteo
+    kind: public_weather
+    task: risk_features
+    description: Open-Meteo archive/forecast API. Requires network at ingest time.
+    license: CC-BY / Open-Meteo terms
+    url: https://open-meteo.com/
+    adapter: open_meteo
+    status: registered_api_only
+
+  soilgrids:
+    id: soilgrids
+    kind: public_soil
+    task: risk_features
+    description: ISRIC SoilGrids 250m. Not Soil Health Card plot data.
+    license: CC-BY-4.0
+    url: https://www.isric.org/explore/soilgrids
+    adapter: soilgrids
+    status: registered_not_downloaded
+
+  cropsap:
+    id: cropsap_maharashtra
+    kind: government_surveillance
+    task: pest_trap_and_advisory
+    description: >
+      Maharashtra CROPSAP (Crop Pest Surveillance and Advisory Project).
+      Covers paddy, soybean, cotton, tur, maize, sorghum, sugarcane, gram.
+      Not publicly redistributable from this repository. Adapter expects a
+      local CSV/JSON dump if an authorised user provides one.
+    license: not_in_repo
+    adapter: cropsap_csv
+    local_dir: data/raw/traps/cropsap
+    status: not_available
+
+  field_maharashtra:
+    id: field_maharashtra
+    kind: project_field
+    task: all
+    description: >
+      Custom Maharashtra smartphone/field dataset defined by this project.
+      Collection protocol is in data/field_protocol/. Zero images are present
+      until partners collect them. Do not fabricate.
+    license: project_pending_consent
+    adapter: field_csv
+    local_dir: data/raw/field_maharashtra
+    status: protocol_only_no_images
+
+  synthetic_smoke:
+    id: synthetic_smoke
+    kind: synthetic
+    task: pipeline_smoke_test
+    description: >
+      Tiny generated images and tabular rows for unit/integration tests only.
+      Always labeled is_synthetic=true. Never report as field performance.
+    license: generated_in_repo
+    adapter: synthetic
+    local_dir: data/synthetic/smoke
+    status: generated_on_demand
+
+class_mapping_files:
+  plantvillage: configs/mappings/plantvillage.yaml
+  plantdoc: configs/mappings/plantdoc.yaml
+
+annotation:
+  classification_manifest: classification.csv
+  detection_formats: [yolo, coco]
+  segmentation_formats: [yolo_seg, coco]
+  observation_format: observations.jsonl
+  required_image_fields:
+    - sample_id
+    - relpath
+    - crop_id
+    - class_id
+    - split
+    - source
+    - is_synthetic
+    - is_field
+    - license
+    - dataset_version

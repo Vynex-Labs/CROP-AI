@@ -1,0 +1,41 @@
+# test.md
+
+Last updated: 2026-08-31
+
+Latest local run: **32 passed** (`.venv/bin/python -m pytest -q`).
+
+## How to run
+
+```bash
+pip install -r requirements-dev.txt
+PYTHONPATH=src pytest
+```
+
+## Inventory
+
+| Layer | Tests | Status |
+| --- | --- | --- |
+| Unit — taxonomy / config | `tests/config/test_taxonomy.py`, `test_loader.py` | IMPLEMENTED |
+| Dataset — synthetic, splits, leakage | `tests/dataset/test_synthetic_and_splits.py` | IMPLEMENTED |
+| Dataset — YOLO/COCO/invalid bbox | `tests/dataset/test_annotations.py` | IMPLEMENTED |
+| Dataset — prepare + analysis honesty | `tests/dataset/test_prepare_and_analysis.py` | IMPLEMENTED |
+| Hardware report / observation store | `tests/dataset/test_hardware_and_store.py` | IMPLEMENTED |
+| Model unit tests | `tests/vision/test_perception.py` (dummy, no weights) | IMPLEMENTED |
+| Integration (vision pipeline) | dummy infer + reject | IMPLEMENTED (untrained) |
+| Field robustness | — | NOT STARTED (needs field images) |
+| Missing-data (risk) | weather writer records `missing_fields`; model tests later | NOT STARTED |
+| Failure handling | invalid image missing-file validator | PARTIAL |
+| Regression | pytest on each change | IN PROGRESS |
+| Performance / long-run | — | NOT STARTED (Phase 5) |
+| Final validation | — | NOT STARTED (Phase 6) |
+
+## Dataset validation (product code, not only tests)
+
+`cropai.dataset.validate.DatasetValidator` implements the Phase 1 minimum checks from MASTER_PROMPT §5.
+
+## Known gaps
+
+- No tests against PlantVillage/PlantDoc on disk (`@pytest.mark.requires_data`) because those files are not in the clone.
+- No GPU tests.
+- No advisory-engine tests beyond YAML presence (Phase 4).
+- Synthetic data must never be used as a substitute for field robustness tests.

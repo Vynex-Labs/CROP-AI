@@ -1,0 +1,44 @@
+crop: rice
+status: placeholder
+source: NIPHM / state IPM packages — attach before enabling chemical advice
+source_url: https://niphm.gov.in/IPMPackages/
+language: en
+entries:
+  blast:
+    disease_id: rice_blast
+    monitoring:
+      - Inspect leaves and necks for diamond-shaped gray lesions with brown borders.
+      - Record humidity and leaf wetness; blast risk rises in prolonged leaf wetness.
+    cultural_control:
+      - Avoid excess nitrogen; follow local nutrient recommendation, do not guess rates.
+      - Remove and destroy heavily infected nursery seedlings.
+      - Use recommended resistant varieties for the district when available.
+    mechanical_control: []
+    biological_control: []
+    chemical_control: []
+    chemical_policy: unavailable_escalate
+    safe_use_guidance:
+      - Do not apply any pesticide without a current approved label and local extension advice.
+    follow_up_monitoring:
+      - Re-inspect 3–7 days after any intervention.
+    expert_referral: true
+    notes: Chemical dosage intentionally omitted.
+  bacterial_blight:
+    disease_id: rice_bacterial_blight
+    monitoring:
+      - Look for water-soaked leaf streaks turning yellow then gray-white from leaf tips.
+    cultural_control:
+      - Use healthy seed; avoid clipping seedlings in infested nurseries.
+      - Avoid continuous flooding of heavily infected fields if locally advised.
+    chemical_control: []
+    chemical_policy: unavailable_escalate
+    expert_referral: true
+  brown_spot:
+    disease_id: rice_brown_spot
+    monitoring:
+      - Circular brown lesions with gray centers on leaves; often associated with nutrient stress.
+    cultural_control:
+      - Correct potassium/soil fertility using a soil test, not a guessed rate.
+    chemical_control: []
+    chemical_policy: unavailable_escalate
+    expert_referral: true

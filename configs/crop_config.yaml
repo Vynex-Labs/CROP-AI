@@ -1,0 +1,1128 @@
+# CROP-AI domain configuration — data-driven crop / disease / pest taxonomy.
+# Source of operational truth for classes, severity, confidence, and advisory references.
+# Do not hard-code this taxonomy in Python.
+
+schema_version: "1.1.0"
+dataset_version_target: "v0.1.1-phase1"
+problem:
+  id: SIH26131
+  title: Early detection and management of crop diseases and pest infestations
+  organization: Government of Maharashtra
+  category: Software
+  theme: Agriculture, FoodTech & Rural Development
+  geography_primary: India
+  geography_sponsor: Maharashtra, India
+  languages_farmer:
+    - en
+    - hi
+    - mr
+  statement: >
+    Farmers often recognise crop diseases or pest infestations only after visible
+    damage has spread. Extension staff may cover large areas, while laboratory
+    diagnosis and expert advice may not be immediately available. Weather, crop
+    stage, variety, soil condition and local pest history influence risk, but
+    these inputs are rarely combined into actionable farm-level alerts.
+    Incorrect diagnosis may lead to delayed treatment, excessive or
+    inappropriate pesticide use, increased cultivation cost, residue concerns
+    and yield loss. The challenge is to provide timely, reliable and locally
+    relevant detection, forecasting and management support.
+  expected_solution: >
+    A farmer- and extension-worker-friendly crop-health system that supports
+    image-based symptom identification, pest-trap or sensor inputs,
+    weather-based risk forecasting, geospatial hotspot mapping, expert
+    validation and multilingual advisories. The system should recommend
+    integrated pest and disease management actions, safe input usage, referral
+    to extension or laboratories, and follow-up monitoring. It should learn
+    from field confirmations and provide dashboards for agriculture officials.
+  expected_outcomes:
+    - earlier detection
+    - reduced crop loss
+    - more targeted pesticide use
+    - faster extension response
+    - improved surveillance coverage
+    - better planning of preventive interventions
+  notes: >
+    Crop list is a UNION, not a narrowing: India's top-10 staples + Maharashtra
+    CROPSAP + required horticulture (tomato, potato, maize, grape). Public
+    image coverage does not equal operational coverage. See dataset.md.
+
+# Named crop sets. Do not drop a set to "simplify" v1.
+crop_sets:
+  top10_india:
+    # Ranked by national area / production importance (MoA&FW Agricultural
+    # Statistics at a Glance + 2024-25 production snapshot). Not a yield claim.
+    - rice
+    - wheat
+    - sugarcane
+    - cotton
+    - maize
+    - soybean
+    - chickpea
+    - groundnut
+    - mustard
+    - pearl_millet
+  horticulture_required:
+    - tomato
+    - potato
+    - maize
+    - grape
+  cropsap_maharashtra:
+    - rice
+    - soybean
+    - cotton
+    - pigeon_pea
+    - maize
+    - sorghum
+    - sugarcane
+    - chickpea
+  retained_not_narrowed:
+    - onion
+    - pepper
+    - pigeon_pea
+    - sorghum
+
+confidence_thresholds:
+  # Calibrated later. These are conservative operational defaults, not accuracy claims.
+  diagnosis_high: 0.85
+  diagnosis_review: 0.60
+  expert_referral_below: 0.60
+  pest_high: 0.80
+  severity_min_mask_coverage: 0.02
+  image_quality_reject: 0.30
+
+severity:
+  # Dual representation: continuous affected_area_pct + ordinal bin.
+  # Visual % is a proxy, not a laboratory disease index unless labeled as such.
+  method: affected_area_percent
+  bins:
+    - id: healthy
+      label: Healthy
+      min_pct: 0.0
+      max_pct: 1.0
+      score: 0
+    - id: early
+      label: Early
+      min_pct: 1.0
+      max_pct: 10.0
+      score: 1
+    - id: moderate
+      label: Moderate
+      min_pct: 10.0
+      max_pct: 25.0
+      score: 2
+    - id: severe
+      label: Severe
+      min_pct: 25.0
+      max_pct: 50.0
+      score: 3
+    - id: very_severe
+      label: Very severe
+      min_pct: 50.0
+      max_pct: 100.0
+      score: 4
+  unknown_policy: require_expert_if_missing
+
+crop_stages:
+  - id: seedling
+    bbch_approx: "00-19"
+  - id: vegetative
+    bbch_approx: "20-39"
+  - id: reproductive
+    bbch_approx: "40-69"
+  - id: ripening
+    bbch_approx: "70-89"
+  - id: harvest
+    bbch_approx: "90-99"
+  - id: unknown
+    bbch_approx: null
+
+symptom_regions:
+  - leaf
+  - stem
+  - fruit
+  - panicle
+  - boll
+  - cob
+  - root
+  - whole_plant
+  - unknown
+
+detection_classes:
+  # Detector vocabulary (YOLO-style). Fine disease ID is the classifier's job.
+  - plant
+  - leaf
+  - fruit
+  - pest
+  - trap
+  - lesion
+
+# ---------------------------------------------------------------------------
+# Crops
+# tier:
+#   training_public  — public images exist for transfer learning
+#   operational      — Maharashtra priority even if public images are scarce
+# coverage:
+#   public_lab / public_field / none  — honest, not aspirational
+# ---------------------------------------------------------------------------
+crops:
+  rice:
+    id: rice
+    scientific_name: Oryza sativa
+    common_names: [rice, paddy, dhan]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [top10_india, operational, training_public]
+    image_coverage: {public_lab: partial, public_field: partial, local_field: none}
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - rice_blast
+      - rice_brown_spot
+      - rice_bacterial_blight
+      - rice_sheath_blight
+      - rice_tungro
+      - rice_healthy
+    pests:
+      - brown_planthopper
+      - yellow_stem_borer
+      - leaf_folder
+      - gall_midge
+    notes: Public rice leaf datasets exist but are not Maharashtra-verified.
+
+  wheat:
+    id: wheat
+    scientific_name: Triticum aestivum
+    common_names: [wheat, gehu]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [top10_india, operational, training_public]
+    image_coverage: {public_lab: limited, public_field: limited, local_field: none}
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - wheat_leaf_rust
+      - wheat_stem_rust
+      - wheat_stripe_rust
+      - wheat_powdery_mildew
+      - wheat_healthy
+    pests:
+      - aphid
+      - armyworm
+
+  maize:
+    id: maize
+    scientific_name: Zea mays
+    common_names: [maize, corn, makka]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [top10_india, operational, training_public, horticulture_required]
+    image_coverage: {public_lab: yes, public_field: partial, local_field: none}
+    plantvillage_aliases: [Corn_(maize)]
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - maize_common_rust
+      - maize_northern_leaf_blight
+      - maize_gray_leaf_spot
+      - maize_healthy
+    pests:
+      - fall_armyworm
+      - stem_borer
+      - aphid
+
+  cotton:
+    id: cotton
+    scientific_name: Gossypium hirsutum
+    common_names: [cotton, kapus]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [top10_india, operational]
+    image_coverage: {public_lab: limited, public_field: limited, local_field: none}
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - cotton_leaf_curl
+      - cotton_bacterial_blight
+      - cotton_alternaria_leaf_spot
+      - cotton_root_rot
+      - cotton_healthy
+    pests:
+      - pink_bollworm
+      - american_bollworm
+      - whitefly
+      - jassid
+      - aphid
+      - thrips
+    notes: Critical Maharashtra crop. Public labeled field images are insufficient.
+
+  soybean:
+    id: soybean
+    scientific_name: Glycine max
+    common_names: [soybean, soya]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [top10_india, operational, training_public]
+    image_coverage: {public_lab: partial, public_field: limited, local_field: none}
+    plantvillage_aliases: [Soybean]
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - soybean_leaf_spot
+      - soybean_rust
+      - soybean_mosaic
+      - soybean_healthy
+    pests:
+      - semilooper
+      - girdle_beetle
+      - whitefly
+      - aphid
+
+  sugarcane:
+    id: sugarcane
+    scientific_name: Saccharum officinarum
+    common_names: [sugarcane, us]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [top10_india, operational]
+    image_coverage: {public_lab: limited, public_field: limited, local_field: none}
+    stages_typical: [seedling, vegetative, ripening]
+    diseases:
+      - sugarcane_red_rot
+      - sugarcane_smut
+      - sugarcane_wilt
+      - sugarcane_healthy
+    pests:
+      - early_shoot_borer
+      - top_borer
+      - white_grub
+      - pyrilla
+    notes: High operational value, weak public image coverage.
+
+  pigeon_pea:
+    id: pigeon_pea
+    scientific_name: Cajanus cajan
+    common_names: [pigeon pea, tur, arhar]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [operational]
+    image_coverage: {public_lab: none, public_field: none, local_field: none}
+    stages_typical: [vegetative, reproductive, ripening]
+    diseases:
+      - pigeon_pea_wilt
+      - pigeon_pea_sterility_mosaic
+      - pigeon_pea_phytophthora_blight
+      - pigeon_pea_healthy
+    pests:
+      - pod_borer
+      - pod_fly
+    notes: CROPSAP crop. No reliable public image dataset identified.
+
+  sorghum:
+    id: sorghum
+    scientific_name: Sorghum bicolor
+    common_names: [sorghum, jowar]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [operational]
+    image_coverage: {public_lab: none, public_field: none, local_field: none}
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - sorghum_grain_mold
+      - sorghum_anthracnose
+      - sorghum_healthy
+    pests:
+      - shoot_fly
+      - stem_borer
+      - aphid
+
+  chickpea:
+    id: chickpea
+    scientific_name: Cicer arietinum
+    common_names: [chickpea, gram, harbhara]
+    maharashtra_priority: high
+    cropsap: true
+    tiers: [top10_india, operational]
+    image_coverage: {public_lab: limited, public_field: none, local_field: none}
+    stages_typical: [vegetative, reproductive, ripening]
+    diseases:
+      - chickpea_wilt
+      - chickpea_ascochyta_blight
+      - chickpea_healthy
+    pests:
+      - pod_borer
+      - aphid
+
+  tomato:
+    id: tomato
+    scientific_name: Solanum lycopersicum
+    common_names: [tomato, tamatar]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [operational, training_public, horticulture_required]
+    image_coverage: {public_lab: yes, public_field: partial, local_field: none}
+    plantvillage_aliases: [Tomato]
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - tomato_early_blight
+      - tomato_late_blight
+      - tomato_leaf_mold
+      - tomato_septoria_leaf_spot
+      - tomato_bacterial_spot
+      - tomato_yellow_leaf_curl
+      - tomato_mosaic_virus
+      - tomato_target_spot
+      - tomato_spider_mites
+      - tomato_healthy
+    pests:
+      - fruit_borer
+      - whitefly
+      - leafminer
+      - aphid
+      - thrips
+
+  potato:
+    id: potato
+    scientific_name: Solanum tuberosum
+    common_names: [potato, batata]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [operational, training_public, horticulture_required]
+    image_coverage: {public_lab: yes, public_field: partial, local_field: none}
+    plantvillage_aliases: [Potato]
+    stages_typical: [vegetative, ripening]
+    diseases:
+      - potato_early_blight
+      - potato_late_blight
+      - potato_healthy
+    pests:
+      - aphid
+      - whitefly
+
+  grape:
+    id: grape
+    scientific_name: Vitis vinifera
+    common_names: [grape, draksha]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [operational, training_public, horticulture_required]
+    image_coverage: {public_lab: yes, public_field: partial, local_field: none}
+    plantvillage_aliases: [Grape]
+    stages_typical: [vegetative, reproductive, ripening]
+    diseases:
+      - grape_black_rot
+      - grape_esca
+      - grape_leaf_blight
+      - grape_healthy
+    pests:
+      - mealybug
+      - thrips
+      - flea_beetle
+
+  pepper:
+    id: pepper
+    scientific_name: Capsicum annuum
+    common_names: [pepper, chilli, mirchi]
+    maharashtra_priority: medium
+    cropsap: false
+    tiers: [training_public]
+    image_coverage: {public_lab: yes, public_field: limited, local_field: none}
+    plantvillage_aliases: [Pepper,_bell]
+    stages_typical: [vegetative, reproductive]
+    diseases:
+      - pepper_bacterial_spot
+      - pepper_healthy
+    pests:
+      - thrips
+      - whitefly
+      - fruit_borer
+
+  onion:
+    id: onion
+    scientific_name: Allium cepa
+    common_names: [onion, kanda]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [operational]
+    image_coverage: {public_lab: limited, public_field: limited, local_field: none}
+    stages_typical: [vegetative, ripening]
+    diseases:
+      - onion_purple_blotch
+      - onion_stemphylium_blight
+      - onion_downy_mildew
+      - onion_healthy
+    pests:
+      - thrips
+      - onion_maggot
+    notes: Maharashtra is a major onion producer. Public labeled images are limited.
+
+  groundnut:
+    id: groundnut
+    scientific_name: Arachis hypogaea
+    common_names: [groundnut, peanut, mungfali, shengdana]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [top10_india, operational]
+    image_coverage: {public_lab: limited, public_field: limited, local_field: none}
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - groundnut_leaf_spot
+      - groundnut_rust
+      - groundnut_collar_rot
+      - groundnut_bud_necrosis
+      - groundnut_healthy
+    pests:
+      - leafminer
+      - thrips
+      - aphid
+      - american_bollworm
+      - white_grub
+    notes: Major Indian oilseed. Public labeled images limited.
+
+  mustard:
+    id: mustard
+    scientific_name: Brassica juncea
+    common_names: [mustard, rapeseed, sarson, rai]
+    maharashtra_priority: medium
+    cropsap: false
+    tiers: [top10_india, operational]
+    image_coverage: {public_lab: limited, public_field: none, local_field: none}
+    stages_typical: [vegetative, reproductive, ripening]
+    diseases:
+      - mustard_white_rust
+      - mustard_alternaria_blight
+      - mustard_downy_mildew
+      - mustard_healthy
+    pests:
+      - aphid
+      - painted_bug
+    notes: Rapeseed-mustard is India's largest rabi oilseed by area.
+
+  pearl_millet:
+    id: pearl_millet
+    scientific_name: Pennisetum glaucum
+    common_names: [pearl millet, bajra, bajri]
+    maharashtra_priority: high
+    cropsap: false
+    tiers: [top10_india, operational]
+    image_coverage: {public_lab: none, public_field: none, local_field: none}
+    stages_typical: [seedling, vegetative, reproductive, ripening]
+    diseases:
+      - pearl_millet_downy_mildew
+      - pearl_millet_blast
+      - pearl_millet_ergot
+      - pearl_millet_healthy
+    pests:
+      - shoot_fly
+      - stem_borer
+      - aphid
+    notes: Major nutri-cereal. No reliable public image dataset identified.
+
+# ---------------------------------------------------------------------------
+# Disease class catalog (classifier vocabulary)
+# visual_cues are observational hints, not diagnoses.
+# ipm_ref keys map into knowledge/ipm/*.yaml — never invent dosages.
+# ---------------------------------------------------------------------------
+diseases:
+  rice_blast:
+    crop: rice
+    pathogen: Magnaporthe oryzae
+    type: fungal
+    symptom_regions: [leaf, panicle, stem]
+    plantvillage: null
+    ipm_ref: rice/blast
+  rice_brown_spot:
+    crop: rice
+    pathogen: Bipolaris oryzae
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: rice/brown_spot
+  rice_bacterial_blight:
+    crop: rice
+    pathogen: Xanthomonas oryzae pv. oryzae
+    type: bacterial
+    symptom_regions: [leaf]
+    ipm_ref: rice/bacterial_blight
+  rice_sheath_blight:
+    crop: rice
+    pathogen: Rhizoctonia solani
+    type: fungal
+    symptom_regions: [stem, leaf]
+    ipm_ref: rice/sheath_blight
+  rice_tungro:
+    crop: rice
+    pathogen: Rice tungro viruses
+    type: viral
+    symptom_regions: [leaf, whole_plant]
+    ipm_ref: rice/tungro
+  rice_healthy:
+    crop: rice
+    pathogen: none
+    type: healthy
+    symptom_regions: [leaf]
+
+  wheat_leaf_rust:
+    crop: wheat
+    pathogen: Puccinia triticina
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: wheat/leaf_rust
+  wheat_stem_rust:
+    crop: wheat
+    pathogen: Puccinia graminis
+    type: fungal
+    symptom_regions: [stem, leaf]
+    ipm_ref: wheat/stem_rust
+  wheat_stripe_rust:
+    crop: wheat
+    pathogen: Puccinia striiformis
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: wheat/stripe_rust
+  wheat_powdery_mildew:
+    crop: wheat
+    pathogen: Blumeria graminis
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: wheat/powdery_mildew
+  wheat_healthy:
+    crop: wheat
+    pathogen: none
+    type: healthy
+    symptom_regions: [leaf]
+
+  maize_common_rust:
+    crop: maize
+    pathogen: Puccinia sorghi
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Corn_(maize)___Common_rust_
+    ipm_ref: maize/common_rust
+  maize_northern_leaf_blight:
+    crop: maize
+    pathogen: Exserohilum turcicum
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Corn_(maize)___Northern_Leaf_Blight
+    ipm_ref: maize/nlb
+  maize_gray_leaf_spot:
+    crop: maize
+    pathogen: Cercospora zeae-maydis
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot
+    ipm_ref: maize/gls
+  maize_healthy:
+    crop: maize
+    pathogen: none
+    type: healthy
+    symptom_regions: [leaf]
+    plantvillage: Corn_(maize)___healthy
+
+  cotton_leaf_curl:
+    crop: cotton
+    pathogen: Cotton leaf curl virus
+    type: viral
+    symptom_regions: [leaf, whole_plant]
+    ipm_ref: cotton/leaf_curl
+  cotton_bacterial_blight:
+    crop: cotton
+    pathogen: Xanthomonas citri pv. malvacearum
+    type: bacterial
+    symptom_regions: [leaf, boll]
+    ipm_ref: cotton/bacterial_blight
+  cotton_alternaria_leaf_spot:
+    crop: cotton
+    pathogen: Alternaria macrospora
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: cotton/alternaria
+  cotton_root_rot:
+    crop: cotton
+    pathogen: Rhizoctonia / Macrophomina
+    type: fungal
+    symptom_regions: [root, whole_plant]
+    ipm_ref: cotton/root_rot
+  cotton_healthy:
+    crop: cotton
+    pathogen: none
+    type: healthy
+    symptom_regions: [leaf]
+
+  soybean_leaf_spot:
+    crop: soybean
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: soybean/leaf_spot
+  soybean_rust:
+    crop: soybean
+    pathogen: Phakopsora pachyrhizi
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: soybean/rust
+  soybean_mosaic:
+    crop: soybean
+    type: viral
+    symptom_regions: [leaf]
+    ipm_ref: soybean/mosaic
+  soybean_healthy:
+    crop: soybean
+    type: healthy
+    symptom_regions: [leaf]
+    plantvillage: Soybean___healthy
+
+  sugarcane_red_rot:
+    crop: sugarcane
+    pathogen: Colletotrichum falcatum
+    type: fungal
+    symptom_regions: [stem]
+    ipm_ref: sugarcane/red_rot
+  sugarcane_smut:
+    crop: sugarcane
+    pathogen: Sporisorium scitamineum
+    type: fungal
+    symptom_regions: [stem, whole_plant]
+    ipm_ref: sugarcane/smut
+  sugarcane_wilt:
+    crop: sugarcane
+    type: fungal
+    symptom_regions: [stem, whole_plant]
+    ipm_ref: sugarcane/wilt
+  sugarcane_healthy:
+    crop: sugarcane
+    type: healthy
+    symptom_regions: [leaf]
+
+  pigeon_pea_wilt:
+    crop: pigeon_pea
+    type: fungal
+    symptom_regions: [whole_plant]
+    ipm_ref: pigeon_pea/wilt
+  pigeon_pea_sterility_mosaic:
+    crop: pigeon_pea
+    type: viral
+    symptom_regions: [leaf, whole_plant]
+    ipm_ref: pigeon_pea/sterility_mosaic
+  pigeon_pea_phytophthora_blight:
+    crop: pigeon_pea
+    type: oomycete
+    symptom_regions: [stem, leaf]
+    ipm_ref: pigeon_pea/phytophthora
+  pigeon_pea_healthy:
+    crop: pigeon_pea
+    type: healthy
+    symptom_regions: [leaf]
+
+  sorghum_grain_mold:
+    crop: sorghum
+    type: fungal
+    symptom_regions: [panicle]
+    ipm_ref: sorghum/grain_mold
+  sorghum_anthracnose:
+    crop: sorghum
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: sorghum/anthracnose
+  sorghum_healthy:
+    crop: sorghum
+    type: healthy
+    symptom_regions: [leaf]
+
+  chickpea_wilt:
+    crop: chickpea
+    pathogen: Fusarium oxysporum f. sp. ciceris
+    type: fungal
+    symptom_regions: [whole_plant]
+    ipm_ref: chickpea/wilt
+  chickpea_ascochyta_blight:
+    crop: chickpea
+    type: fungal
+    symptom_regions: [leaf, stem]
+    ipm_ref: chickpea/ascochyta
+  chickpea_healthy:
+    crop: chickpea
+    type: healthy
+    symptom_regions: [leaf]
+
+  tomato_early_blight:
+    crop: tomato
+    pathogen: Alternaria solani
+    type: fungal
+    symptom_regions: [leaf, fruit]
+    plantvillage: Tomato___Early_blight
+    ipm_ref: tomato/early_blight
+  tomato_late_blight:
+    crop: tomato
+    pathogen: Phytophthora infestans
+    type: oomycete
+    symptom_regions: [leaf, fruit, stem]
+    plantvillage: Tomato___Late_blight
+    ipm_ref: tomato/late_blight
+  tomato_leaf_mold:
+    crop: tomato
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Tomato___Leaf_Mold
+    ipm_ref: tomato/leaf_mold
+  tomato_septoria_leaf_spot:
+    crop: tomato
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Tomato___Septoria_leaf_spot
+    ipm_ref: tomato/septoria
+  tomato_bacterial_spot:
+    crop: tomato
+    type: bacterial
+    symptom_regions: [leaf, fruit]
+    plantvillage: Tomato___Bacterial_spot
+    ipm_ref: tomato/bacterial_spot
+  tomato_yellow_leaf_curl:
+    crop: tomato
+    type: viral
+    symptom_regions: [leaf, whole_plant]
+    plantvillage: Tomato___Tomato_Yellow_Leaf_Curl_Virus
+    ipm_ref: tomato/tylcv
+  tomato_mosaic_virus:
+    crop: tomato
+    type: viral
+    symptom_regions: [leaf]
+    plantvillage: Tomato___Tomato_mosaic_virus
+    ipm_ref: tomato/mosaic
+  tomato_target_spot:
+    crop: tomato
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Tomato___Target_Spot
+    ipm_ref: tomato/target_spot
+  tomato_spider_mites:
+    crop: tomato
+    type: mite
+    symptom_regions: [leaf]
+    plantvillage: Tomato___Spider_mites Two-spotted_spider_mite
+    ipm_ref: tomato/spider_mites
+  tomato_healthy:
+    crop: tomato
+    type: healthy
+    symptom_regions: [leaf]
+    plantvillage: Tomato___healthy
+
+  potato_early_blight:
+    crop: potato
+    pathogen: Alternaria solani
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Potato___Early_blight
+    ipm_ref: potato/early_blight
+  potato_late_blight:
+    crop: potato
+    pathogen: Phytophthora infestans
+    type: oomycete
+    symptom_regions: [leaf]
+    plantvillage: Potato___Late_blight
+    ipm_ref: potato/late_blight
+  potato_healthy:
+    crop: potato
+    type: healthy
+    symptom_regions: [leaf]
+    plantvillage: Potato___healthy
+
+  grape_black_rot:
+    crop: grape
+    type: fungal
+    symptom_regions: [leaf, fruit]
+    plantvillage: Grape___Black_rot
+    ipm_ref: grape/black_rot
+  grape_esca:
+    crop: grape
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Grape___Esca_(Black_Measles)
+    ipm_ref: grape/esca
+  grape_leaf_blight:
+    crop: grape
+    type: fungal
+    symptom_regions: [leaf]
+    plantvillage: Grape___Leaf_blight_(Isariopsis_Leaf_Spot)
+    ipm_ref: grape/leaf_blight
+  grape_healthy:
+    crop: grape
+    type: healthy
+    symptom_regions: [leaf]
+    plantvillage: Grape___healthy
+
+  pepper_bacterial_spot:
+    crop: pepper
+    type: bacterial
+    symptom_regions: [leaf, fruit]
+    plantvillage: Pepper,_bell___Bacterial_spot
+    ipm_ref: pepper/bacterial_spot
+  pepper_healthy:
+    crop: pepper
+    type: healthy
+    symptom_regions: [leaf]
+    plantvillage: Pepper,_bell___healthy
+
+  onion_purple_blotch:
+    crop: onion
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: onion/purple_blotch
+  onion_stemphylium_blight:
+    crop: onion
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: onion/stemphylium
+  onion_downy_mildew:
+    crop: onion
+    type: oomycete
+    symptom_regions: [leaf]
+    ipm_ref: onion/downy_mildew
+  onion_healthy:
+    crop: onion
+    type: healthy
+    symptom_regions: [leaf]
+
+  groundnut_leaf_spot:
+    crop: groundnut
+    pathogen: Passalora arachidicola / Nothopassalora personata
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: groundnut/leaf_spot
+  groundnut_rust:
+    crop: groundnut
+    pathogen: Puccinia arachidis
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: groundnut/rust
+  groundnut_collar_rot:
+    crop: groundnut
+    pathogen: Aspergillus niger
+    type: fungal
+    symptom_regions: [stem, root]
+    ipm_ref: groundnut/collar_rot
+  groundnut_bud_necrosis:
+    crop: groundnut
+    pathogen: Groundnut bud necrosis virus
+    type: viral
+    symptom_regions: [leaf, whole_plant]
+    ipm_ref: groundnut/bud_necrosis
+  groundnut_healthy:
+    crop: groundnut
+    type: healthy
+    symptom_regions: [leaf]
+
+  mustard_white_rust:
+    crop: mustard
+    pathogen: Albugo candida
+    type: oomycete
+    symptom_regions: [leaf]
+    ipm_ref: mustard/white_rust
+  mustard_alternaria_blight:
+    crop: mustard
+    pathogen: Alternaria brassicae
+    type: fungal
+    symptom_regions: [leaf, stem]
+    ipm_ref: mustard/alternaria
+  mustard_downy_mildew:
+    crop: mustard
+    pathogen: Hyaloperonospora brassicae
+    type: oomycete
+    symptom_regions: [leaf]
+    ipm_ref: mustard/downy_mildew
+  mustard_healthy:
+    crop: mustard
+    type: healthy
+    symptom_regions: [leaf]
+
+  pearl_millet_downy_mildew:
+    crop: pearl_millet
+    pathogen: Sclerospora graminicola
+    type: oomycete
+    symptom_regions: [leaf, panicle]
+    ipm_ref: pearl_millet/downy_mildew
+  pearl_millet_blast:
+    crop: pearl_millet
+    pathogen: Magnaporthe grisea
+    type: fungal
+    symptom_regions: [leaf]
+    ipm_ref: pearl_millet/blast
+  pearl_millet_ergot:
+    crop: pearl_millet
+    pathogen: Claviceps fusiformis
+    type: fungal
+    symptom_regions: [panicle]
+    ipm_ref: pearl_millet/ergot
+  pearl_millet_healthy:
+    crop: pearl_millet
+    type: healthy
+    symptom_regions: [leaf]
+
+# ---------------------------------------------------------------------------
+# Pest catalog (detector / trap vocabulary)
+# ---------------------------------------------------------------------------
+pests:
+  brown_planthopper:
+    crops: [rice]
+    trap_types: [light, yellow_sticky]
+    ipm_ref: rice/bph
+  yellow_stem_borer:
+    crops: [rice]
+    trap_types: [pheromone]
+    ipm_ref: rice/ysb
+  leaf_folder:
+    crops: [rice]
+    trap_types: [pheromone]
+    ipm_ref: rice/leaf_folder
+  gall_midge:
+    crops: [rice]
+    trap_types: []
+    ipm_ref: rice/gall_midge
+  fall_armyworm:
+    crops: [maize, sorghum, sugarcane, pearl_millet]
+    trap_types: [pheromone]
+    ipm_ref: maize/faw
+  stem_borer:
+    crops: [maize, sorghum, rice, pearl_millet]
+    trap_types: [pheromone]
+    ipm_ref: maize/stem_borer
+  pink_bollworm:
+    crops: [cotton]
+    trap_types: [pheromone]
+    ipm_ref: cotton/pink_bollworm
+  american_bollworm:
+    crops: [cotton, chickpea, tomato, groundnut]
+    scientific_name: Helicoverpa armigera
+    trap_types: [pheromone]
+    ipm_ref: cotton/american_bollworm
+  whitefly:
+    crops: [cotton, soybean, tomato, pepper, potato]
+    trap_types: [yellow_sticky]
+    ipm_ref: cotton/whitefly
+  jassid:
+    crops: [cotton]
+    trap_types: [yellow_sticky]
+    ipm_ref: cotton/jassid
+  aphid:
+    crops: [wheat, maize, cotton, soybean, tomato, potato, sorghum, chickpea, mustard, groundnut, pearl_millet]
+    trap_types: [yellow_sticky]
+    ipm_ref: general/aphid
+  thrips:
+    crops: [cotton, onion, grape, tomato, pepper, groundnut]
+    trap_types: [blue_sticky]
+    ipm_ref: general/thrips
+  fruit_borer:
+    crops: [tomato, pepper]
+    trap_types: [pheromone]
+    ipm_ref: tomato/fruit_borer
+  leafminer:
+    crops: [tomato, groundnut]
+    trap_types: [yellow_sticky]
+    ipm_ref: tomato/leafminer
+  mealybug:
+    crops: [grape, cotton]
+    trap_types: []
+    ipm_ref: grape/mealybug
+  flea_beetle:
+    crops: [grape]
+    trap_types: []
+    ipm_ref: grape/flea_beetle
+  semilooper:
+    crops: [soybean]
+    trap_types: []
+    ipm_ref: soybean/semilooper
+  girdle_beetle:
+    crops: [soybean]
+    trap_types: []
+    ipm_ref: soybean/girdle_beetle
+  early_shoot_borer:
+    crops: [sugarcane]
+    trap_types: [pheromone]
+    ipm_ref: sugarcane/esb
+  top_borer:
+    crops: [sugarcane]
+    trap_types: [pheromone]
+    ipm_ref: sugarcane/top_borer
+  white_grub:
+    crops: [sugarcane, groundnut]
+    trap_types: [light]
+    ipm_ref: sugarcane/white_grub
+  pyrilla:
+    crops: [sugarcane]
+    trap_types: [light]
+    ipm_ref: sugarcane/pyrilla
+  pod_borer:
+    crops: [pigeon_pea, chickpea]
+    trap_types: [pheromone]
+    ipm_ref: pigeon_pea/pod_borer
+  pod_fly:
+    crops: [pigeon_pea]
+    trap_types: []
+    ipm_ref: pigeon_pea/pod_fly
+  shoot_fly:
+    crops: [sorghum, pearl_millet]
+    trap_types: []
+    ipm_ref: sorghum/shoot_fly
+  armyworm:
+    crops: [wheat, maize, pearl_millet]
+    trap_types: [pheromone]
+    ipm_ref: wheat/armyworm
+  onion_maggot:
+    crops: [onion]
+    trap_types: []
+    ipm_ref: onion/maggot
+  painted_bug:
+    crops: [mustard]
+    trap_types: []
+    ipm_ref: mustard/painted_bug
+
+risk_features:
+  weather:
+    - temperature_c
+    - humidity_pct
+    - rainfall_mm
+    - wind_ms
+    - soil_moisture
+    - rainfall_1d
+    - rainfall_3d
+    - rainfall_7d
+    - humidity_rolling_3d
+    - humidity_rolling_7d
+    - temperature_range_1d
+    - high_humidity_hours
+    - rainfall_frequency_7d
+  crop:
+    - crop_id
+    - variety
+    - growth_stage
+    - days_since_planting
+  history:
+    - days_since_previous_outbreak
+    - recent_positive_detections
+    - recent_pest_count_trend
+  trap:
+    - trap_count_1d
+    - trap_count_3d
+    - trap_count_7d
+  spatial:
+    - h3_index
+    - nearby_positive_count
+    - hotspot_score
+  missing_data_policy: continue_with_available_mark_reduced_confidence
+
+advisory:
+  categories:
+    - monitoring
+    - cultural_control
+    - mechanical_control
+    - biological_control
+    - chemical_control
+    - safe_use_guidance
+    - follow_up_monitoring
+    - expert_referral
+  chemical_policy: >
+    Never invent dosage, frequency, PHI, or legal approval. If a verified IPM
+    package does not contain the required chemical details, escalate to
+    extension / laboratory consultation.
+  knowledge_dir: knowledge/ipm
+  languages: [en, hi, mr]
+
+geospatial:
+  h3_resolution_field: 10
+  h3_resolution_cluster: 8
+  h3_resolution_district: 6
+  hotspot_methods: [kde, dbscan, h3_aggregation]
+  temporal_decay_halflife_days: 7

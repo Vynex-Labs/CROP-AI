@@ -1,0 +1,40 @@
+crop: cotton
+status: placeholder
+source: NIPHM Cotton IPM package / Maharashtra CROPSAP — attach before enabling chemical advice
+source_url: https://niphm.gov.in/IPMPackages/Cotton.pdf
+language: en
+entries:
+  pink_bollworm:
+    pest_id: pink_bollworm
+    monitoring:
+      - Use pheromone traps for monitoring only; interpret counts with local thresholds.
+      - Inspect flowers and bolls for larvae.
+    cultural_control:
+      - Avoid ratoon cotton; terminate crop on time as per local recommendation.
+      - Destroy leftover bolls after harvest.
+    mechanical_control:
+      - Collect and destroy infested flowers/bolls during scouting.
+    biological_control: []
+    chemical_control: []
+    chemical_policy: unavailable_escalate
+    expert_referral: true
+  bacterial_blight:
+    disease_id: cotton_bacterial_blight
+    monitoring:
+      - Angular leaf spots, sometimes with veinal necrosis; boll lesions possible.
+    cultural_control:
+      - Avoid dense planting that keeps canopy wet.
+      - Remove crop residues; deep plough as locally recommended.
+    chemical_control: []
+    chemical_policy: unavailable_escalate
+    expert_referral: true
+  leaf_curl:
+    disease_id: cotton_leaf_curl
+    monitoring:
+      - Upward/downward leaf curling, vein thickening; associated with whitefly.
+    cultural_control:
+      - Remove severely symptomatic plants after expert confirmation.
+      - Manage whitefly hosts around the field.
+    chemical_control: []
+    chemical_policy: unavailable_escalate
+    expert_referral: true

@@ -1,0 +1,2 @@
+sample_id,relpath,crop_id,class_id,farmer_id,location_id,video_id,capture_session_id,lat,lon,captured_at,growth_stage,variety,severity_bin,affected_area_pct,symptom_region,license,is_field,is_synthetic,consent
+uuid-example,raw/field_maharashtra/cotton/uuid-example.jpg,cotton,cotton_bacterial_blight,farmer_0001,field_jalna_12,,sess_2026-09-01_a,19.84,75.88,2026-09-01T08:15:00+05:30,reproductive,Bt-hybrid,early,8.0,leaf,project_pending_consent,true,false,yes
