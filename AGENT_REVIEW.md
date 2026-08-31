@@ -1,5 +1,74 @@
 # AGENT_REVIEW.md
 
+## Phase 4 / 4.5 — 2026-08-31
+
+### Attempted work
+
+- H3 indexing (with grid fallback), DBSCAN, KDE, time decay, hotspot states
+- Weighted farm-level fusion
+- Structured IPM advisory + expert/lab referral
+- Qualitative Phase 4.5 scenario tests
+
+### Completed work
+
+- Isolated / nearby-cluster / distant / old-vs-recent / low-confidence tests
+- Missing weather/trap fusion continues with reduced confidence
+- Conflicting fusion channels → referral
+- Placeholder IPM: `chemical_control_allowed=false`, empty chemical list
+- Low confidence suppresses disease name
+- Hindi/Marathi **labels** only
+- pytest **60 passed**
+
+### Failed work
+
+- Uber H3 package not installed
+- Labeled hotspot precision/recall
+- Dashboard UI
+- Verified IPM packages (still placeholders)
+
+### Benchmark results
+
+NONE on real hotspots. Synthetic clusters are not surveillance skill.
+
+### Model decisions
+
+```
+Selected spatial model: NOT SELECTED
+Runtime: grid_or_h3 + DBSCAN + KDE + decay (unvalidated)
+GNN: not introduced
+Fusion: weighted_deterministic (uncalibrated, unfitted)
+Why: 0 labeled hotspots. MASTER_PROMPT §8.
+```
+
+Answers required by §8 Phase 4.5:
+
+- Is H3+KDE/DBSCAN sufficient? **UNKNOWN**
+- Expert-referral correctness (rules): tested on stubs, not field cases
+
+### Agent Confidence: 72/100 (code) / 0/100 (hotspot skill)
+
+Why this confidence:
+
+- Qualitative spatial tests match the required scenario list.
+- Advisory cannot invent dosage.
+- Grid fallback is labeled, not faked as H3.
+
+Remaining uncertainty:
+
+- Grid cells ≠ H3 hexes.
+- No Maharashtra coordinate truth set.
+- Fusion weights are guesses in config.
+
+Better alternatives considered:
+
+- Require h3 install in requirements.txt — skipped so CI stays tiny; documented fallback.
+- GNN — rejected (§8).
+- Emit chemical lists from NIPHM PDFs — rejected (not attached/verified).
+
+Recommendation: **PROCEED** to Phase 5 deployment *infrastructure*. Do not freeze spatial methods.
+
+---
+
 ## Phase 3 / 3.5 — 2026-08-31
 
 ### Attempted work
@@ -264,4 +333,4 @@ Do **not** silently start Phase 2 until the user answers.
 
 ## Later phases
 
-Phase 4–6 reviews: not written (phases not started).
+Phase 5–6 reviews: not written (phases not started).

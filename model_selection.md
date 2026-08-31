@@ -71,7 +71,8 @@ Date: 2026-08-31
 ```
 Task: hotspot detection
 Candidate: H3 + KDE / DBSCAN + time decay
-Selected: NOT SELECTED — pending Phase 4.5
-Alternatives: H3 aggregation only. GNN not in scope unless measured benefit.
+Selected: NOT SELECTED — Phase 4.5 harness ready; 0 labeled hotspots
+Alternatives: H3 aggregation only. GNN not introduced (no measured benefit).
+Runtime: grid_or_h3 + DBSCAN + KDE + time decay (unvalidated scores)
 Date: 2026-08-31
 ```

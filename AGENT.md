@@ -4,9 +4,9 @@ Primary handoff / state document. If this file disagrees with `MASTER_PROMPT.md`
 
 ## Current phase
 
-**Phase 3 complete (code). Stopped at Phase 3.5 verification gate. Risk models NOT TRAINED / NOT SELECTED.**
+**Phase 4 complete (code). Stopped at Phase 4.5 verification gate. Hotspots/fusion UNVALIDATED. No GNN. Chemicals blocked.**
 
-Next action: user chooses PROCEED to Phase 4 (geospatial / fusion / advisory infrastructure) and/or supplies real weather, trap, and outbreak labels. Do not treat LightGBM as selected. Heuristic fallback is unvalidated and uncalibrated.
+Next action: user chooses PROCEED to Phase 5 (deployment infrastructure) and/or supplies labeled observations. Do not treat H3+KDE/DBSCAN as a measured winner.
 
 ## Completed work
 
@@ -24,6 +24,8 @@ Next action: user chooses PROCEED to Phase 4 (geospatial / fusion / advisory inf
 - pytest vision tests
 - Phase 3 risk engine, heuristic fallback, missing-data policy, train/eval/benchmark harness
 - pytest risk tests
+- Phase 4 hotspots (DBSCAN+KDE+decay), weighted fusion, structured advisory
+- pytest geo + advisory tests
 
 ## Pending work
 
@@ -34,6 +36,8 @@ Next action: user chooses PROCEED to Phase 4 (geospatial / fusion / advisory inf
 - Measured Phase 2.5 model comparison
 - Real weather / trap / outbreak labels for risk ML
 - Measured Phase 3.5 model comparison
+- Labeled hotspot evaluation
+- Official dashboard / farmer UI
 - All later phases
 
 ## Architecture
@@ -42,7 +46,7 @@ Working hypothesis only (MASTER_PROMPT §2). See README.md. No weights.
 
 ## Decisions
 
-See `phase1.md`, `phase2.md`, `phase3.md`. No model selected. Risk runtime fallback is `heuristic_unvalidated`.
+See `phase1.md`–`phase4.md`. No model selected. Fusion runtime is weighted_deterministic. IPM chemicals blocked.
 
 ## Commands
 
@@ -54,6 +58,8 @@ PYTHONPATH=src python -m cropai infer path.jpg --crop rice
 PYTHONPATH=src python -m cropai.vision.train --dry-run
 PYTHONPATH=src python -m cropai forecast-risk --crop rice --humidity 90 --synthetic
 PYTHONPATH=src python -m cropai.risk.train --dry-run
+PYTHONPATH=src python -m cropai advise --crop rice --disease rice_blast --confidence 0.9
+PYTHONPATH=src python -m cropai benchmark-geo
 PYTHONPATH=src pytest
 ./train_linux.sh train --dry-run
 ./train_linux.sh train-risk --dry-run
@@ -67,6 +73,7 @@ PYTHONPATH=src pytest
 - IPM YAML is `status: placeholder` — chemical advice disabled by policy
 - `src/cropai/vision/` exists; backends are dummy until checkpoints exist
 - `src/cropai/risk/` exists; LightGBM unselected; heuristic is unvalidated / uncalibrated
+- `src/cropai/geo/` `fusion/` `advisory/` exist; h3 package missing (grid fallback); IPM placeholder
 
 ## Requirement traceability
 
@@ -98,9 +105,9 @@ Status key: `[ ]` NOT STARTED · `[~]` IN PROGRESS · `[x]` IMPLEMENTED · `[T]`
 | YOLO11 detector | `train_detector.py` + dummy | vision tests | [x] code / [P] train |
 | EfficientNetV2-S classifier | `train_classifier.py` + dummy | vision tests | [x] code / [P] train |
 | YOLO11-seg | `train_detector.py --seg` + dummy | vision tests | [x] code / [P] train |
-| LightGBM risk | — | — | [ ] |
-| H3 + KDE/DBSCAN | — | — | [ ] |
-| Advisory engine (structured, no gen override) | IPM YAML stubs + rules | — | [~] |
+| LightGBM risk | `src/cropai/risk/` + heuristic fallback | tests/risk | [x] code / [P] train |
+| H3 + KDE/DBSCAN | `src/cropai/geo/` (grid fallback if no h3) | tests/geo | [T] qualitative / not labeled |
+| Advisory engine (structured, no gen override) | `src/cropai/advisory/` | tests/advisory | [T] |
 | Expert referral thresholds | crop_config confidence_thresholds | taxonomy test | [x] |
 | Follow-up monitoring store | ObservationStore.follow_ups | store test | [T] |
 | Multilingual presentation layer | languages listed en/hi/mr | — | [ ] |

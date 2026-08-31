@@ -21,6 +21,7 @@ REQUIRED_CONFIGS = [
     "configs/training.yaml",
     "configs/inference.yaml",
     "configs/risk.yaml",
+    "configs/geo.yaml",
     "MASTER_PROMPT.md",
 ]
 

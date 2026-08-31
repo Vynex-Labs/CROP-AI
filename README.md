@@ -12,9 +12,11 @@ This is **not** a single-image classifier demo. Authoritative specification: [`M
 
 | Item | State |
 | --- | --- |
-| Phase | **3 complete (code) → stopped at Phase 3.5. Models NOT TRAINED** |
+| Phase | **4 complete (code) → stopped at Phase 4.5. Models NOT TRAINED** |
 | Perception models | Code + dummy backends. Candidates not selected. |
 | Risk models | Heuristic fallback only. LightGBM **not selected**. |
+| Geospatial / fusion | DBSCAN+KDE+decay + weighted fusion. **Unvalidated.** |
+| Advisory | Structured IPM stubs; chemicals **blocked**. |
 | Trained weights | NONE |
 | Maharashtra field images in repo | **0** (protocol only) |
 | Public datasets in repo | **not downloaded** |
@@ -113,6 +115,17 @@ python -m cropai benchmark-risk
 ```
 
 Do not treat those scores as outbreak probabilities.
+
+Hotspots / fusion / advisory:
+
+```bash
+python -m cropai hotspots --observations data/synthetic/smoke/observations.jsonl --as-of 2026-08-31
+python -m cropai fuse-risk --crop rice --weather-risk 0.7 --trap-risk 0.2 --vision-untrained --synthetic
+python -m cropai advise --crop rice --disease rice_blast --confidence 0.9 --lang hi
+python -m cropai benchmark-geo
+```
+
+Advisory never invents pesticide dose. Placeholder IPM → monitoring + extension referral.
 
 ## Documentation map
 

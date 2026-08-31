@@ -1,0 +1,65 @@
+# Geospatial + fusion configuration. Weights and thresholds are NOT validated
+# against labeled Maharashtra hotspots. MASTER_PROMPT §8 / §27.
+
+schema_version: "1.0.0"
+model_version: cropai-geo-0.4.0-untrained
+
+h3:
+  resolution_field: 10
+  resolution_cluster: 8
+  resolution_district: 6
+  note: >-
+    Prefer the h3 package when installed. Otherwise a lat/lon grid fallback is
+    used and indexes are prefixed gridN: — they are not Uber H3 cells.
+
+decay:
+  half_life_days: 7
+  method: exponential_half_life
+
+dbscan:
+  eps_km: 5.0
+  min_samples: 3
+  metric: haversine
+
+kde:
+  bandwidth_km: 8.0
+  kernel: gaussian
+
+classification:
+  # Unvalidated operational bins for pipeline tests, not outbreak truth.
+  isolated_max_points: 1
+  emerging_recent_frac: 0.70
+  declining_recent_frac: 0.30
+  recent_window_days: 7
+  established_min_points: 3
+
+severity_weight:
+  healthy: 0.05
+  early: 0.40
+  moderate: 0.65
+  severe: 0.85
+  very_severe: 1.00
+  unknown: 0.30
+  "": 0.30
+
+low_confidence_below: 0.60
+unvalidated_observation_factor: 0.50
+
+fusion:
+  candidate: weighted_deterministic
+  alternatives: [lightgbm]
+  calibrated: false
+  weights:
+    vision: 0.25
+    weather: 0.25
+    historical: 0.15
+    trap: 0.15
+    spatial: 0.20
+  conflict_spread: 0.50
+  note: >-
+    Deterministic weighted fusion. Not fitted. Missing channels are dropped
+    and remaining weights renormalized. Do not treat as calibrated farm risk.
+
+gnn:
+  allowed: false
+  reason: No evidence of benefit; MASTER_PROMPT forbids GNN unless measured.

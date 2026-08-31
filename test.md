@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-31
 
-Latest local run: **44 passed** (`.venv/bin/python -m pytest -q`).
+Latest local run: **60 passed** (`.venv/bin/python -m pytest -q`).
 
 ## How to run
 
@@ -23,6 +23,8 @@ PYTHONPATH=src pytest
 | Model unit tests | `tests/vision/test_perception.py` (dummy, no weights) | IMPLEMENTED |
 | Integration (vision pipeline) | dummy infer + reject | IMPLEMENTED (untrained) |
 | Risk engine | `tests/risk/test_risk_engine.py` | IMPLEMENTED (untrained) |
+| Geospatial hotspots | `tests/geo/test_hotspots.py` | IMPLEMENTED (synthetic scenarios) |
+| Advisory / referral | `tests/advisory/test_advisory.py` | IMPLEMENTED |
 | Field robustness | — | NOT STARTED (needs field images) |
 | Missing-data (risk) | weather/trap absence → reduced confidence, continues | IMPLEMENTED (synthetic) |
 | Failure handling | invalid image missing-file validator + vision reject | PARTIAL |

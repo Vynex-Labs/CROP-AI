@@ -56,6 +56,31 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("benchmark-risk", help="Phase 3.5 comparison plan (no invented scores)")
     sub.add_parser("evaluate-risk", help="Evaluate risk (NOT MEASURED without labels)")
 
+    p_hs = sub.add_parser("hotspots", help="Detect hotspots from observation JSONL")
+    p_hs.add_argument("--observations", required=True)
+    p_hs.add_argument("--as-of", default="", dest="as_of")
+
+    p_fuse = sub.add_parser("fuse-risk", help="Farm-level fusion (uncalibrated weighted model)")
+    p_fuse.add_argument("--crop", required=True)
+    p_fuse.add_argument("--vision-conf", type=float, default=None)
+    p_fuse.add_argument("--vision-untrained", action="store_true")
+    p_fuse.add_argument("--weather-risk", type=float, default=None)
+    p_fuse.add_argument("--trap-risk", type=float, default=None)
+    p_fuse.add_argument("--historical-risk", type=float, default=None)
+    p_fuse.add_argument("--spatial-risk", type=float, default=None)
+    p_fuse.add_argument("--synthetic", action="store_true")
+
+    p_adv = sub.add_parser("advise", help="Structured IPM advisory (no invented chemicals)")
+    p_adv.add_argument("--crop", required=True)
+    p_adv.add_argument("--disease", default="")
+    p_adv.add_argument("--pest", default="")
+    p_adv.add_argument("--confidence", type=float, default=None)
+    p_adv.add_argument("--severity", default="")
+    p_adv.add_argument("--farm-risk", type=float, default=None)
+    p_adv.add_argument("--lang", default="en")
+
+    sub.add_parser("benchmark-geo", help="Phase 4.5 comparison plan (no invented scores)")
+
     args = parser.parse_args(argv)
     if args.cmd == "version":
         print(__version__)
@@ -167,6 +192,58 @@ def main(argv: list[str] | None = None) -> int:
         from cropai.risk.evaluate import main as eval_risk
 
         return eval_risk([])
+    if args.cmd == "hotspots":
+        from pathlib import Path
+
+        from cropai.geo.hotspots import detect_hotspots
+        from cropai.risk.tables import load_observations
+
+        recs = load_observations(Path(args.observations))
+        report = detect_hotspots(recs, as_of=args.as_of or None)
+        print(json.dumps(report.to_dict(), indent=2))
+        return 0
+    if args.cmd == "fuse-risk":
+        from cropai.fusion.engine import FusionEngine
+        from cropai.fusion.schema import FusionInput
+
+        out = FusionEngine().fuse(
+            FusionInput(
+                crop_id=args.crop,
+                vision_confidence=args.vision_conf,
+                vision_untrained=args.vision_untrained,
+                weather_risk=args.weather_risk,
+                trap_risk=args.trap_risk,
+                historical_risk=args.historical_risk,
+                spatial_risk=args.spatial_risk,
+                missing_weather=args.weather_risk is None,
+                missing_trap=args.trap_risk is None,
+                is_synthetic=args.synthetic,
+            )
+        )
+        print(json.dumps(out.to_dict(), indent=2))
+        return 0
+    if args.cmd == "advise":
+        from cropai.advisory.engine import AdvisoryEngine
+        from cropai.advisory.schema import AdvisoryRequest
+
+        out = AdvisoryEngine().advise(
+            AdvisoryRequest(
+                crop_id=args.crop,
+                disease_id=args.disease,
+                pest_id=args.pest,
+                confidence=args.confidence,
+                severity=args.severity,
+                farm_risk=args.farm_risk,
+                language=args.lang,
+            )
+        )
+        print(json.dumps(out.to_dict(), indent=2))
+        return 0
+    if args.cmd == "benchmark-geo":
+        from cropai.geo.benchmark import benchmark_plan
+
+        print(json.dumps(benchmark_plan(), indent=2))
+        return 0
     parser.print_help()
     return 2
 

@@ -42,3 +42,7 @@ def load_inference_config(path: Path | None = None) -> dict[str, Any]:
 
 def load_risk_config(path: Path | None = None) -> dict[str, Any]:
     return load_yaml(path or _cfg("risk.yaml"))
+
+
+def load_geo_config(path: Path | None = None) -> dict[str, Any]:
+    return load_yaml(path or _cfg("geo.yaml"))

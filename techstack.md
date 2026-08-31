@@ -42,7 +42,8 @@ To be installed by the user on the RTX 4050 machine. Exact versions must be reco
 | torchvision EfficientNetV2-S | classify | CODE present; package **not installed** |
 | LightGBM / XGBoost | risk forecast candidates | CODE present; packages **not installed**; **not selected** |
 | heuristic_unvalidated | risk runtime fallback | IMPLEMENTED (uncalibrated) |
-| H3, scikit-learn | geospatial | NOT IMPLEMENTED |
+| H3 | spatial index | CODE present; package **not installed**; grid fallback used |
+| scikit-learn DBSCAN/KDE | geospatial | NOT USED — pure-Python DBSCAN + KDE |
 | ONNX / ONNX Runtime / TensorRT | export | NOT IMPLEMENTED |
 | FastAPI | API | NOT IMPLEMENTED |
 

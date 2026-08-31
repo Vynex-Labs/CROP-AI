@@ -1,6 +1,7 @@
 from cropai.config.loader import (
     load_crop_config,
     load_dataset_config,
+    load_geo_config,
     load_inference_config,
     load_risk_config,
     load_training_config,
