@@ -96,6 +96,9 @@ def main(argv: list[str] | None = None) -> int:
     p_end.add_argument("--crop", default="rice")
 
     sub.add_parser("benchmark-runtime", help="Phase 5.5 comparison plan (no invented scores)")
+    p_fin = sub.add_parser("validate-final", help="Phase 6 checklist — does not invent VERIFIED")
+    p_fin.add_argument("--smoke-image", default="")
+    p_fin.add_argument("--crop", default="rice")
 
     args = parser.parse_args(argv)
     if args.cmd == "version":
@@ -284,6 +287,13 @@ def main(argv: list[str] | None = None) -> int:
 
         print(json.dumps(benchmark_plan(), indent=2))
         return 0
+    if args.cmd == "validate-final":
+        from cropai.validate.main import main as val_main
+
+        argv = []
+        if args.smoke_image:
+            argv.extend(["--smoke-image", args.smoke_image, "--crop", args.crop])
+        return val_main(argv)
     parser.print_help()
     return 2
 

@@ -32,3 +32,7 @@ def test_core_yaml_loads():
     runtime = load_runtime_config()
     assert runtime["precision"]["int8"]["adopted"] is False
     assert runtime["precision"]["gpu_target"] == "fp16"
+    from cropai.validate.report import architecture_freeze
+
+    freeze = architecture_freeze()
+    assert freeze["frozen"] is False

@@ -23,6 +23,7 @@ REQUIRED_CONFIGS = [
     "configs/risk.yaml",
     "configs/geo.yaml",
     "configs/runtime.yaml",
+    "configs/architecture_freeze.yaml",
     "MASTER_PROMPT.md",
 ]
 

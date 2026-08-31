@@ -1,6 +1,6 @@
 # model_selection.md
 
-No model has been trained or benchmarked. Entries are **candidates**, not selections.
+No model has been trained or benchmarked. Entries are **candidates**, not selections. Architecture freeze: **false** (`configs/architecture_freeze.yaml`).
 
 Date: 2026-08-31
 

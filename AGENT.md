@@ -4,9 +4,9 @@ Primary handoff / state document. If this file disagrees with `MASTER_PROMPT.md`
 
 ## Current phase
 
-**Phase 5 complete (code). Stopped at Phase 5.5 verification gate. No ONNX/TRT export. GPU metrics NOT MEASURED. INT8 not adopted.**
+**Phase 6 harness complete. Architecture NOT frozen. Project NOT complete. §31 = 0 VERIFIED.**
 
-Next action: user chooses PROCEED to Phase 6 (final validation harness — will report NOT VERIFIED) and/or runs GPU export/profile on the RTX 4050.
+Next action: HOLD on SIH “done”. User trains on RTX 4050, adds field data / verified IPM / dashboard, then re-runs `cropai validate-final`. No Phase 7.
 
 ## Completed work
 
@@ -28,6 +28,8 @@ Next action: user chooses PROCEED to Phase 6 (final validation harness — will 
 - pytest geo + advisory tests
 - Phase 5 runtime selector, bounded queue, dummy profiler, export/endurance harness
 - pytest runtime tests
+- Phase 6 final-validation harness (honest NOT VERIFIED)
+- pytest validate tests
 
 ## Pending work
 
@@ -41,8 +43,8 @@ Next action: user chooses PROCEED to Phase 6 (final validation harness — will 
 - Labeled hotspot evaluation
 - Official dashboard / farmer UI
 - Measured ONNX/TensorRT/FP16 on RTX 4050
-- Phase 6 final field validation
-- All later phases
+- Phase 6 field/GPU re-run of `validate-final` after real data and weights
+- Official dashboard / farmer UI (still absent)
 
 ## Architecture
 
@@ -50,7 +52,7 @@ Working hypothesis only (MASTER_PROMPT §2). See README.md. No weights.
 
 ## Decisions
 
-See `phase1.md`–`phase5.md`. No model selected. Runtime is dummy. INT8 not adopted. FP16 is policy only.
+See `phase1.md`–`phase6.md`. No model selected. Architecture freeze refused. Runtime is dummy. INT8 not adopted.
 
 ## Commands
 
@@ -66,6 +68,7 @@ PYTHONPATH=src python -m cropai advise --crop rice --disease rice_blast --confid
 PYTHONPATH=src python -m cropai benchmark-geo
 PYTHONPATH=src python -m cropai export-models --dry-run
 PYTHONPATH=src python -m cropai benchmark-runtime
+PYTHONPATH=src python -m cropai validate-final
 PYTHONPATH=src pytest
 ./train_linux.sh train --dry-run
 ./train_linux.sh train-risk --dry-run
@@ -125,7 +128,7 @@ Status key: `[ ]` NOT STARTED · `[~]` IN PROGRESS · `[x]` IMPLEMENTED · `[T]`
 | Farmer / extension UI | — | — | [ ] |
 | ONNX / TensorRT / FP16 path | `runtime/export_plan.py` + `vision/export.py` | tests/runtime | [T] harness / [P] real export |
 | Reproducible run metadata | `vision/run_meta.py` | dry-run | [x] |
-| Benchmarks (acc, F1, mAP, FPS, …) | — | — | [ ] |
+| Benchmarks (acc, F1, mAP, FPS, …) | `src/cropai/validate/report.py` | tests/validate | [T] harness; metrics NOT MEASURED |
 | No invented pesticide dosage | knowledge/ipm + engine rules | — | [x] |
 
-Phase 6 success checklist (MASTER_PROMPT §31): all items **NOT VERIFIED**.
+Phase 6 success checklist (MASTER_PROMPT §31): **0 / 24 VERIFIED**. `project_complete=false`.

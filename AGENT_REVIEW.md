@@ -1,5 +1,38 @@
 # AGENT_REVIEW.md
 
+## Phase 6 — 2026-08-31
+
+### Attempted work
+
+- Architecture freeze file, §31 checklist, vision/forecast/spatial/system metric blocks
+- `cropai validate-final` (exit 3 if incomplete)
+
+### Completed work
+
+- Freeze explicitly **false**
+- Every numeric metric **NOT MEASURED**
+- Every §31 checkbox **NOT VERIFIED** (some code IMPLEMENTED_NOT_VERIFIED)
+- pytest **69 passed**
+- `project_complete=false`
+
+### Failed work (expected)
+
+- Field benchmark, dashboard UI, CUDA training, ONNX/TRT engines, verified IPM
+
+### Benchmark results
+
+NONE that may be quoted as product skill.
+
+### Model decisions
+
+Architecture **not frozen**. No selected models.
+
+### Agent Confidence: 75/100 (honesty of the gate) / 0/100 (§31 product)
+
+Recommendation: **HOLD**. Do not announce SIH completion. Re-run validation only after real weights, field images, and measured gates.
+
+---
+
 ## Phase 5 / 5.5 — 2026-08-31
 
 ### Attempted work
@@ -394,4 +427,4 @@ Do **not** silently start Phase 2 until the user answers.
 
 ## Later phases
 
-Phase 6 review: not written (phase not started).
+None. Phase 6 is the last specified phase.

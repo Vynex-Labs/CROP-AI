@@ -12,7 +12,7 @@ This is **not** a single-image classifier demo. Authoritative specification: [`M
 
 | Item | State |
 | --- | --- |
-| Phase | **5 complete (code) → stopped at Phase 5.5. No ONNX/TRT. GPU NOT MEASURED** |
+| Phase | **6 harness complete. Architecture NOT frozen. Project NOT complete.** |
 | Perception models | Code + dummy backends. Candidates not selected. |
 | Risk models | Heuristic fallback only. LightGBM **not selected**. |
 | Geospatial / fusion | DBSCAN+KDE+decay + weighted fusion. **Unvalidated.** |
@@ -137,6 +137,13 @@ python -m cropai profile-pipeline path.jpg --repeats 3
 ```
 
 Dummy timings are **not** YOLO/TensorRT FPS. INT8 is **not adopted**.
+
+Final validation (will fail until field evidence exists):
+
+```bash
+python -m cropai validate-final
+# exit 3 → project_complete=false; metrics NOT MEASURED
+```
 
 ## Documentation map
 
