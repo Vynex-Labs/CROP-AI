@@ -1,0 +1,72 @@
+{
+  "version": "v0.1.0-phase1",
+  "created_at": "2026-08-31T20:31:46+00:00",
+  "n_records": 76,
+  "n_synthetic": 76,
+  "n_real": 0,
+  "n_field_real": 0,
+  "sources": [
+    "synthetic_smoke"
+  ],
+  "csv": "data/manifests/images_v0.1.0-phase1.csv",
+  "csv_sha256": "33b36b1163409448ad674c2111e8f9ea7380e5d861ecc4cbaffeed4112ca8ea9",
+  "git_commit": "41aeab497df34718202a821c491c7abd83a7d404",
+  "counts": {
+    "crop_id": {
+      "grape": 8,
+      "maize": 8,
+      "pepper": 8,
+      "potato": 8,
+      "rice": 8,
+      "soybean": 8,
+      "tomato": 8,
+      "wheat": 8,
+      "cotton": 4,
+      "onion": 4,
+      "sugarcane": 4
+    },
+    "class_id": {
+      "cotton_alternaria_leaf_spot": 4,
+      "grape_black_rot": 4,
+      "grape_healthy": 4,
+      "maize_common_rust": 4,
+      "maize_healthy": 4,
+      "onion_downy_mildew": 4,
+      "pepper_bacterial_spot": 4,
+      "pepper_healthy": 4,
+      "potato_early_blight": 4,
+      "potato_healthy": 4,
+      "rice_bacterial_blight": 4,
+      "rice_healthy": 4,
+      "soybean_healthy": 4,
+      "soybean_leaf_spot": 4,
+      "sugarcane_healthy": 4,
+      "tomato_bacterial_spot": 4,
+      "tomato_healthy": 4,
+      "wheat_healthy": 4,
+      "wheat_leaf_rust": 4
+    },
+    "source": {
+      "synthetic_smoke": 76
+    },
+    "split": {
+      "train": 57,
+      "val": 10,
+      "test": 9
+    },
+    "is_field": {
+      "False": 76
+    },
+    "is_synthetic": {
+      "True": 76
+    }
+  },
+  "notes": "Phase 1 manifest. Synthetic records are labeled is_synthetic=true. Skipped 0 records whose class/crop is outside taxonomy.",
+  "extra": {
+    "validation_ok": true,
+    "n_errors": 0,
+    "n_warnings": 1,
+    "public_ingested_before_filter": 0
+  },
+  "fingerprint": "a00081b3a9f805a7d896789379bc541f1475bdeeaf31955f744d9744f8f1d958"
+}

@@ -1,0 +1,25 @@
+# MASTER_PROMPT §10: freeze before final benchmark.
+# This file records that freeze is NOT in effect — no model was selected.
+
+schema_version: "1.0.0"
+frozen: false
+reason: >-
+  Phase 2.5–5.5 gates produced no measured winners. Freezing YOLO11 /
+  EfficientNetV2-S / LightGBM / H3+KDE as production models would violate
+  MASTER_PROMPT §1.4 and §11.
+date: "2026-08-31"
+candidates_not_selected:
+  detector: yolo11n
+  classifier: efficientnet_v2_s
+  segmentation: yolo11n-seg
+  risk: lightgbm
+  risk_runtime_fallback: heuristic_unvalidated
+  fusion: weighted_deterministic
+  spatial: grid_or_h3 + dbscan + kde + decay
+  runtime: dummy
+precision:
+  gpu_target: fp16
+  int8_adopted: false
+change_policy: >-
+  Do not change models during a final benchmark unless a catastrophic defect
+  is discovered. No final benchmark is running because freeze is false.

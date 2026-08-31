@@ -1,0 +1,22 @@
+keep_unmapped: true
+map:
+  "Tomato Early blight": tomato_early_blight
+  "Tomato Late blight leaf": tomato_late_blight
+  "Tomato leaf bacterial spot": tomato_bacterial_spot
+  "Tomato leaf mosaic virus": tomato_mosaic_virus
+  "Tomato leaf yellow virus": tomato_yellow_leaf_curl
+  "Tomato mold leaf": tomato_leaf_mold
+  "Tomato Septoria leaf spot": tomato_septoria_leaf_spot
+  "Tomato leaf": tomato_healthy
+  "Potato leaf early blight": potato_early_blight
+  "Potato leaf late blight": potato_late_blight
+  "Potato leaf": potato_healthy
+  "Corn rust leaf": maize_common_rust
+  "Corn leaf blight": maize_northern_leaf_blight
+  "Corn Gray leaf spot": maize_gray_leaf_spot
+  "Corn leaf": maize_healthy
+  "grape leaf black rot": grape_black_rot
+  "grape leaf": grape_healthy
+  "Bell_pepper leaf spot": pepper_bacterial_spot
+  "Bell_pepper leaf": pepper_healthy
+  "Soyabean leaf": soybean_healthy

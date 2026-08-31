@@ -1,0 +1,17 @@
+# Installed on the user's training machine (RTX 4050 + CUDA), not in the agent sandbox.
+# Pin families, not nightly builds. Exact versions are recorded at training time in runs/.
+-r requirements.txt
+numpy>=1.26.0
+torch>=2.2.0
+torchvision>=0.17.0
+ultralytics>=8.3.0
+onnx>=1.16.0
+onnxruntime-gpu>=1.18.0; platform_system != "Darwin"
+onnxruntime>=1.18.0; platform_system == "Darwin"
+lightgbm>=4.3.0
+xgboost>=2.0.0
+scikit-learn>=1.4.0
+h3>=3.7.7
+shapely>=2.0.0
+fastapi>=0.110.0
+uvicorn>=0.27.0

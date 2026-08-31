@@ -1,0 +1,52 @@
+# Deterministic advisory eligibility. Not a model.
+schema_version: "1.0.0"
+rules:
+  - id: high_confidence_known_ipm
+    if:
+      diagnosis_confidence_gte: 0.85
+      class_known: true
+      ipm_status_in: [verified]
+    then:
+      advisory_allowed: true
+      expert_referral: false
+  - id: medium_confidence_review
+    if:
+      diagnosis_confidence_gte: 0.60
+      diagnosis_confidence_lt: 0.85
+    then:
+      advisory_allowed: monitoring_only
+      expert_referral: true
+  - id: low_confidence
+    if:
+      diagnosis_confidence_lt: 0.60
+    then:
+      advisory_allowed: false
+      expert_referral: true
+      message: Low confidence — expert validation recommended. Do not treat this as a diagnosis.
+  - id: severe_or_uncertain
+    if:
+      any:
+        - severity_in: [severe, very_severe]
+        - diagnosis_confidence_lt: 0.60
+    then:
+      expert_referral: true
+      laboratory_referral: true
+  - id: ipm_placeholder
+    if:
+      ipm_status_in: [placeholder, missing]
+    then:
+      advisory_allowed: monitoring_only
+      chemical_control_allowed: false
+      message: Verified IPM package not attached. Recommend extension consultation.
+  - id: never_invent_chemicals
+    if:
+      chemical_policy: unavailable_escalate
+    then:
+      chemical_control_allowed: false
+      expert_referral: true
+languages:
+  en: English
+  hi: Hindi
+  mr: Marathi
+presentation_rule: >
+  Translate structured fields only. Never change disease, risk, action, or referral.

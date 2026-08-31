@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Data (large binaries stay out of git; manifests may be committed)
+data/raw/**
+data/processed/**
+data/splits/**
+data/synthetic/**
+!data/**/.gitkeep
+!data/manifests/
+!data/field_protocol/
+*.jpg
+*.jpeg
+*.png
+*.tif
+*.tiff
+*.bmp
+*.webp
+*.mp4
+*.avi
+*.zip
+*.tar
+*.tar.gz
+*.7z
+# Keep tiny fixture images used by tests
+!tests/fixtures/**
+
+# Models and runs
+models/**
+!models/.gitkeep
+runs/**
+!runs/**/.gitkeep
+logs/**
+!logs/.gitkeep
+*.pt
+*.pth
+*.onnx
+*.engine
+*.trt
+*.pkl
+*.joblib
+*.lgb
+*.bin
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Secrets
+.env
+.env.*
+!.env.example
+credentials.json
+*.pem
+
+# Node (future UI)
+node_modules/
+apps/**/dist/
+apps/**/.next/

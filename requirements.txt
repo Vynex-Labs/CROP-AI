@@ -1,0 +1,3 @@
+# Phase 1 runtime (dataset tooling). Heavy ML extras are in requirements-train.txt.
+pyyaml>=6.0.1
+pillow>=10.0.0
