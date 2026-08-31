@@ -26,7 +26,6 @@ PYTHONPATH=src pytest
 | Geospatial hotspots | `tests/geo/test_hotspots.py` | IMPLEMENTED (synthetic scenarios) |
 | Advisory / referral | `tests/advisory/test_advisory.py` | IMPLEMENTED |
 | Runtime / export / endurance | `tests/runtime/test_runtime.py` | IMPLEMENTED (dummy) |
-| Final validation | `tests/validate/test_phase6.py` | HARNESS (0 VERIFIED) |
 | Field robustness | — | NOT STARTED (needs field images) |
 | Missing-data (risk) | weather/trap absence → reduced confidence, continues | IMPLEMENTED (synthetic) |
 | Failure handling | invalid image missing-file validator + vision reject | PARTIAL |
