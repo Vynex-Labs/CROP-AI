@@ -46,8 +46,12 @@ segmentation:
 
 risk:
   candidate: lightgbm
-  alternatives: [xgboost, logistic_baseline]
+  alternatives: [xgboost, logistic_baseline, heuristic_unvalidated]
   horizons_days: [1, 3, 7]
+  runtime_default: heuristic_unvalidated
+  note: >-
+    Candidate only. Do not select LightGBM until measured on real outbreak
+    labels. Sandbox has 0 labels — refuse silent ML skill claims.
 
 export:
   formats: [pytorch, onnx]

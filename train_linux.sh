@@ -4,7 +4,8 @@
 #   ./train_linux.sh              # env check + dataset prep
 #   ./train_linux.sh hardware
 #   ./train_linux.sh dataset
-#   ./train_linux.sh train        # Phase 2+ (refuses if CUDA missing unless CROP_AI_ALLOW_CPU_TRAIN=1)
+#   ./train_linux.sh train        # Phase 2 vision (refuses if CUDA missing unless CROP_AI_ALLOW_CPU_TRAIN=1)
+#   ./train_linux.sh train-risk   # Phase 3 LightGBM/heuristic (CPU ok; --dry-run default-safe)
 #   ./train_linux.sh all
 set -euo pipefail
 
@@ -88,17 +89,28 @@ PY
   "$PYTHON_BIN" "$TRAIN_PY" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
 }
 
+run_train_risk() {
+  "$PYTHON_BIN" "$ROOT/scripts/check_env.py" || fail "environment check failed"
+  RISK_PY="$ROOT/src/cropai/risk/train.py"
+  if [[ ! -f "$RISK_PY" ]]; then
+    warn "Phase 3 risk training is not in this tree yet."
+    exit 1
+  fi
+  "$PYTHON_BIN" "$RISK_PY" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
+}
+
 case "$STAGE" in
   hardware) run_hardware ;;
   dataset) run_dataset ;;
   train) run_train ;;
+  train-risk) run_train_risk ;;
   all)
     run_dataset
     run_train
     ;;
   *)
     echo "Unknown stage: $STAGE"
-    echo "Usage: $0 [hardware|dataset|train|all]"
+    echo "Usage: $0 [hardware|dataset|train|train-risk|all]"
     exit 2
     ;;
 esac

@@ -36,6 +36,26 @@ def main(argv: list[str] | None = None) -> int:
     p_eval.add_argument("--task", default="classifier")
     p_eval.add_argument("--split", default="val")
 
+    p_risk = sub.add_parser("forecast-risk", help="1/3/7-day disease and pest risk (uncalibrated)")
+    p_risk.add_argument("--crop", required=True)
+    p_risk.add_argument("--weather", default="", help="JSONL of WeatherRecord")
+    p_risk.add_argument("--traps", default="", help="JSONL of TrapRecord")
+    p_risk.add_argument("--observations", default="", help="JSONL of ObservationRecord")
+    p_risk.add_argument("--as-of", default="", dest="as_of")
+    p_risk.add_argument("--lat", type=float, default=None)
+    p_risk.add_argument("--lon", type=float, default=None)
+    p_risk.add_argument("--growth-stage", default="unknown")
+    p_risk.add_argument("--planting-date", default="")
+    p_risk.add_argument("--humidity", type=float, default=None)
+    p_risk.add_argument("--temperature", type=float, default=None)
+    p_risk.add_argument("--rainfall-7d", type=float, default=None, dest="rainfall_7d")
+    p_risk.add_argument("--trap-7d", type=int, default=None, dest="trap_7d")
+    p_risk.add_argument("--backend", default="auto")
+    p_risk.add_argument("--synthetic", action="store_true")
+
+    sub.add_parser("benchmark-risk", help="Phase 3.5 comparison plan (no invented scores)")
+    sub.add_parser("evaluate-risk", help="Evaluate risk (NOT MEASURED without labels)")
+
     args = parser.parse_args(argv)
     if args.cmd == "version":
         print(__version__)
@@ -87,6 +107,66 @@ def main(argv: list[str] | None = None) -> int:
         from cropai.vision.evaluate import main as eval_main
 
         return eval_main(["--task", args.task, "--split", args.split])
+    if args.cmd == "forecast-risk":
+        from pathlib import Path
+
+        from cropai.dataset.schema import TrapRecord, WeatherRecord
+        from cropai.risk.engine import RiskEngine
+        from cropai.risk.tables import request_from_files
+        from cropai.utils.logging import utc_now_iso
+
+        ts = args.as_of or utc_now_iso()
+        req = request_from_files(
+            crop_id=args.crop,
+            weather_path=Path(args.weather) if args.weather else None,
+            trap_path=Path(args.traps) if args.traps else None,
+            obs_path=Path(args.observations) if args.observations else None,
+            timestamp=ts,
+            lat=args.lat,
+            lon=args.lon,
+            growth_stage=args.growth_stage,
+            planting_date=args.planting_date,
+            is_synthetic=args.synthetic,
+        )
+        if args.humidity is not None or args.temperature is not None or args.rainfall_7d is not None:
+            req.weather.append(
+                WeatherRecord(
+                    station_id="cli",
+                    timestamp=ts,
+                    lat=args.lat,
+                    lon=args.lon,
+                    temperature_c=args.temperature,
+                    humidity_pct=args.humidity,
+                    rainfall_mm=args.rainfall_7d,
+                    is_synthetic=args.synthetic,
+                    source="cli_scalar",
+                )
+            )
+        if args.trap_7d is not None:
+            req.traps.append(
+                TrapRecord(
+                    trap_id="cli",
+                    timestamp=ts,
+                    trap_type="unspecified",
+                    pest_id="unknown",
+                    count=int(args.trap_7d),
+                    crop_id=args.crop,
+                    is_synthetic=args.synthetic,
+                    source="cli_scalar",
+                )
+            )
+        out = RiskEngine(backend_kind=args.backend).forecast(req)
+        print(json.dumps(out.to_dict(), indent=2))
+        return 0
+    if args.cmd == "benchmark-risk":
+        from cropai.risk.benchmark import benchmark_plan
+
+        print(json.dumps(benchmark_plan(), indent=2))
+        return 0
+    if args.cmd == "evaluate-risk":
+        from cropai.risk.evaluate import main as eval_risk
+
+        return eval_risk([])
     parser.print_help()
     return 2
 

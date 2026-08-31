@@ -12,8 +12,9 @@ This is **not** a single-image classifier demo. Authoritative specification: [`M
 
 | Item | State |
 | --- | --- |
-| Phase | **2 complete (code) → stopped at Phase 2.5. Models NOT TRAINED** |
+| Phase | **3 complete (code) → stopped at Phase 3.5. Models NOT TRAINED** |
 | Perception models | Code + dummy backends. Candidates not selected. |
+| Risk models | Heuristic fallback only. LightGBM **not selected**. |
 | Trained weights | NONE |
 | Maharashtra field images in repo | **0** (protocol only) |
 | Public datasets in repo | **not downloaded** |
@@ -101,6 +102,17 @@ python -m cropai.vision.benchmark
 ```
 
 Export helpers: `src/cropai/vision/export.py` (needs torch). TensorRT is Phase 5.
+
+Risk forecast (uncalibrated heuristic until outbreak labels exist):
+
+```bash
+python -m cropai forecast-risk --crop rice --humidity 90 --temperature 26 --rainfall-7d 20 --synthetic
+python -m cropai.risk.train --dry-run
+python -m cropai benchmark-risk
+./train_linux.sh train-risk --dry-run
+```
+
+Do not treat those scores as outbreak probabilities.
 
 ## Documentation map
 

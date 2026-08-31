@@ -4,9 +4,9 @@ Primary handoff / state document. If this file disagrees with `MASTER_PROMPT.md`
 
 ## Current phase
 
-**Phase 2 complete (code). Stopped at Phase 2.5 verification gate. Models NOT TRAINED / NOT SELECTED.**
+**Phase 3 complete (code). Stopped at Phase 3.5 verification gate. Risk models NOT TRAINED / NOT SELECTED.**
 
-Next action: user chooses PROCEED to Phase 3 (risk infrastructure) and/or runs GPU training. Do not treat YOLO11 / EfficientNetV2-S as winners.
+Next action: user chooses PROCEED to Phase 4 (geospatial / fusion / advisory infrastructure) and/or supplies real weather, trap, and outbreak labels. Do not treat LightGBM as selected. Heuristic fallback is unvalidated and uncalibrated.
 
 ## Completed work
 
@@ -22,6 +22,8 @@ Next action: user chooses PROCEED to Phase 3 (risk infrastructure) and/or runs G
 - Phase 1 unit tests
 - Phase 2 perception pipeline, dummy backends, train/eval/benchmark harness
 - pytest vision tests
+- Phase 3 risk engine, heuristic fallback, missing-data policy, train/eval/benchmark harness
+- pytest risk tests
 
 ## Pending work
 
@@ -30,6 +32,8 @@ Next action: user chooses PROCEED to Phase 3 (risk infrastructure) and/or runs G
 - CROPSAP / weather / soil authorised dumps
 - User GPU training of detector / classifier / segmenter
 - Measured Phase 2.5 model comparison
+- Real weather / trap / outbreak labels for risk ML
+- Measured Phase 3.5 model comparison
 - All later phases
 
 ## Architecture
@@ -38,7 +42,7 @@ Working hypothesis only (MASTER_PROMPT §2). See README.md. No weights.
 
 ## Decisions
 
-See `phase1.md` and `phase2.md`. No model selected.
+See `phase1.md`, `phase2.md`, `phase3.md`. No model selected. Risk runtime fallback is `heuristic_unvalidated`.
 
 ## Commands
 
@@ -48,8 +52,11 @@ PYTHONPATH=src python -m cropai taxonomy
 PYTHONPATH=src python -m cropai prepare-dataset
 PYTHONPATH=src python -m cropai infer path.jpg --crop rice
 PYTHONPATH=src python -m cropai.vision.train --dry-run
+PYTHONPATH=src python -m cropai forecast-risk --crop rice --humidity 90 --synthetic
+PYTHONPATH=src python -m cropai.risk.train --dry-run
 PYTHONPATH=src pytest
 ./train_linux.sh train --dry-run
+./train_linux.sh train-risk --dry-run
 ```
 
 ## Known issues
@@ -59,6 +66,7 @@ PYTHONPATH=src pytest
 - Operational crops cotton, sugarcane, tur, jowar, onion lack adequate public images
 - IPM YAML is `status: placeholder` — chemical advice disabled by policy
 - `src/cropai/vision/` exists; backends are dummy until checkpoints exist
+- `src/cropai/risk/` exists; LightGBM unselected; heuristic is unvalidated / uncalibrated
 
 ## Requirement traceability
 

@@ -41,3 +41,17 @@ output_fields:
   - severity_estimate
   - confidence
   - model_version
+
+risk_output_fields:
+  - timestamp
+  - crop
+  - disease_risk_1d
+  - disease_risk_3d
+  - disease_risk_7d
+  - pest_risk_1d
+  - pest_risk_3d
+  - pest_risk_7d
+  - calibrated
+  - reduced_confidence
+  - missing_inputs
+  - model_version

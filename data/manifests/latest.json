@@ -1,6 +1,6 @@
 {
   "version": "v0.1.0-test2",
-  "created_at": "2026-08-31T20:51:44+00:00",
+  "created_at": "2026-08-31T21:27:35+00:00",
   "n_records": 88,
   "n_synthetic": 88,
   "n_real": 0,
@@ -9,8 +9,8 @@
     "synthetic_smoke"
   ],
   "csv": "data/manifests/images_v0.1.0-test2.csv",
-  "csv_sha256": "6227000b386aedf5a5b526b1fe3a826bbb1ad8c83ee91bcfcaf26b3b18cec5cc",
-  "git_commit": "41aeab497df34718202a821c491c7abd83a7d404",
+  "csv_sha256": "a81cd3e50726c1d6a5367718243ee78fe79ab6296d40887e0d618c49c5e3ad3e",
+  "git_commit": "8c2eb5a16fb08c97552fbc03ebc9feb4f0d3df4e",
   "counts": {
     "crop_id": {
       "grape": 8,
@@ -74,5 +74,5 @@
     "n_warnings": 1,
     "public_ingested_before_filter": 0
   },
-  "fingerprint": "d04e92a355528d76aee8e9e2dd3fb37036c277a05a021ce8c633d2f46f98f1b5"
+  "fingerprint": "abb5f5b00e242b143da8b520eba67e05244596cb6f08c67da27240d61e04c721"
 }

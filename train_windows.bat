@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 rem CROP-AI training / dataset entrypoint (cmd.exe and PowerShell).
-rem Usage: train_windows.bat [hardware|dataset|train|all]
+rem Usage: train_windows.bat [hardware|dataset|train|train-risk|all]
 
 cd /d "%~dp0"
 set "CROP_AI_ROOT=%CD%"
@@ -35,9 +35,10 @@ echo stage: %STAGE%
 if /I "%STAGE%"=="hardware" goto HARDWARE
 if /I "%STAGE%"=="dataset" goto DATASET
 if /I "%STAGE%"=="train" goto TRAIN
+if /I "%STAGE%"=="train-risk" goto TRAINRISK
 if /I "%STAGE%"=="all" goto DATASET
 echo Unknown stage: %STAGE%
-echo Usage: train_windows.bat [hardware^|dataset^|train^|all]
+echo Usage: train_windows.bat [hardware^|dataset^|train^|train-risk^|all]
 exit /b 2
 
 :HARDWARE
@@ -94,6 +95,15 @@ if errorlevel 3 (
   )
 )
 %PYTHON_BIN% "%CD%\src\cropai\vision\train.py" %EXTRA%
+if errorlevel 1 exit /b 1
+goto DONE
+
+:TRAINRISK
+if not exist "%CD%\src\cropai\risk\train.py" (
+  echo [FAIL] src\cropai\risk\train.py missing
+  exit /b 1
+)
+%PYTHON_BIN% "%CD%\src\cropai\risk\train.py" %EXTRA%
 if errorlevel 1 exit /b 1
 goto DONE
 

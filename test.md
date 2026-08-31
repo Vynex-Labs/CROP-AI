@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-31
 
-Latest local run: **32 passed** (`.venv/bin/python -m pytest -q`).
+Latest local run: **44 passed** (`.venv/bin/python -m pytest -q`).
 
 ## How to run
 
@@ -22,8 +22,9 @@ PYTHONPATH=src pytest
 | Hardware report / observation store | `tests/dataset/test_hardware_and_store.py` | IMPLEMENTED |
 | Model unit tests | `tests/vision/test_perception.py` (dummy, no weights) | IMPLEMENTED |
 | Integration (vision pipeline) | dummy infer + reject | IMPLEMENTED (untrained) |
+| Risk engine | `tests/risk/test_risk_engine.py` | IMPLEMENTED (untrained) |
 | Field robustness | — | NOT STARTED (needs field images) |
-| Missing-data (risk) | weather writer records `missing_fields`; model tests later | NOT STARTED |
+| Missing-data (risk) | weather/trap absence → reduced confidence, continues | IMPLEMENTED (synthetic) |
 | Failure handling | invalid image missing-file validator + vision reject | PARTIAL |
 | Regression | pytest on each change | IN PROGRESS |
 | Performance / long-run | — | NOT STARTED (Phase 5) |

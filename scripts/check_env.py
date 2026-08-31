@@ -20,6 +20,7 @@ REQUIRED_CONFIGS = [
     "configs/dataset.yaml",
     "configs/training.yaml",
     "configs/inference.yaml",
+    "configs/risk.yaml",
     "MASTER_PROMPT.md",
 ]
 
@@ -89,12 +90,14 @@ def main() -> int:
         _ok("data/raw/ contains files")
 
     train_mod = ROOT / "src" / "cropai" / "vision" / "train.py"
+    risk_mod = ROOT / "src" / "cropai" / "risk" / "train.py"
     print(
         json.dumps(
             {
                 "cuda_available": hw.get("cuda_available"),
                 "torch_installed": hw.get("torch_installed"),
                 "phase2_train_script": train_mod.exists(),
+                "phase3_risk_script": risk_mod.exists(),
                 "data_raw_populated": public,
             }
         )

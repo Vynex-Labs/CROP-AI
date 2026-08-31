@@ -40,6 +40,8 @@ To be installed by the user on the RTX 4050 machine. Exact versions must be reco
 | CUDA / cuDNN | GPU | PENDING USER HARDWARE |
 | Ultralytics YOLO11 | detect / segment | CODE present; package **not installed** |
 | torchvision EfficientNetV2-S | classify | CODE present; package **not installed** |
+| LightGBM | risk forecast candidate | CODE present; package **not installed**; **not selected** |
+| heuristic_unvalidated | risk runtime fallback | IMPLEMENTED (uncalibrated) |
 | LightGBM / XGBoost | risk | NOT IMPLEMENTED |
 | H3, scikit-learn | geospatial | NOT IMPLEMENTED |
 | ONNX / ONNX Runtime / TensorRT | export | NOT IMPLEMENTED |

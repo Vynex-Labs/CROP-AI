@@ -1,5 +1,70 @@
 # AGENT_REVIEW.md
 
+## Phase 3 / 3.5 — 2026-08-31
+
+### Attempted work
+
+- Risk schema, temporal features, missing-data policy, heuristic fallback
+- LightGBM/XGBoost adapters, identity calibration, train/eval/benchmark
+- CLI `forecast-risk` / `benchmark-risk` / `evaluate-risk`
+
+### Completed work
+
+- 1/3/7-day disease and pest score fields
+- Continue-on-missing weather/trap/soil with reduced confidence
+- Insufficient-input expert referral
+- Train refuses ML fit when real outbreak labels < 200
+- pytest **44 passed** (includes risk)
+
+### Failed work
+
+- LightGBM / XGBoost training (packages absent; 0 real labels)
+- Calibration evaluation
+- Ingest of NASA POWER / Open-Meteo / CROPSAP / SoilGrids (not on disk)
+
+### Benchmark results
+
+NONE on real outbreaks. Synthetic heuristic scores are **not** forecast skill.
+
+### Model decisions
+
+```
+Selected risk model: NOT SELECTED
+Runtime fallback: heuristic_unvalidated (uncalibrated, unvalidated)
+Why: 0 real outbreak labels. MASTER_PROMPT §7 forbids fabricating ML skill.
+Rejected alternatives: none rejected by evidence (none measured)
+Data limitations: no farm weather, no trap time series, no outbreak labels
+```
+
+Answers required by §7 Phase 3.5:
+
+- Is LightGBM best? **UNKNOWN**
+- Does data support ML forecasting? **NO**
+
+### Agent Confidence: 70/100 (code) / 0/100 (forecast skill)
+
+Why this confidence:
+
+- Pipeline matches the Phase 3 contract without inventing ROC-AUC.
+- Missing-data behaviour is tested.
+- Heuristic is labeled unvalidated.
+
+Remaining uncertainty:
+
+- Heuristic weights are generic, not Maharashtra ETL.
+- LightGBM API untested here.
+- No lead-time evaluation possible without dated outbreaks.
+
+Better alternatives considered:
+
+- Constant 0.5 climatology only — weaker missing-data tests; kept as inner fallback when no features exist.
+- Fake literature ROC-AUC — rejected (§27).
+- Hold all of Phase 3 until CROPSAP arrives — rejected; user said Continue.
+
+Recommendation: **PROCEED** to Phase 4 geospatial / fusion / advisory *infrastructure*. Do not freeze LightGBM.
+
+---
+
 ## Phase 2 / 2.5 — 2026-08-31
 
 ### Attempted work
@@ -199,4 +264,4 @@ Do **not** silently start Phase 2 until the user answers.
 
 ## Later phases
 
-Phase 2–6 reviews: not written (phases not started).
+Phase 4–6 reviews: not written (phases not started).

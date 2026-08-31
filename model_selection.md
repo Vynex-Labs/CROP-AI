@@ -59,10 +59,10 @@ Date: 2026-08-31
 ```
 Task: 1/3/7-day disease and pest risk
 Candidate: LightGBM
-Selected: NOT SELECTED — pending Phase 3.5
-Alternatives: XGBoost, logistic/statistical baseline. Transformer only if data size justifies it.
+Selected: NOT SELECTED — Phase 3.5 harness ready; 0 real outbreak labels
+Alternatives: XGBoost, logistic baseline, heuristic_unvalidated. Transformer not justified.
 Accuracy: NOT MEASURED
-Reason: If real outbreak labels are too few, fall back to a validated rule/statistical baseline. Do not fabricate ML skill.
+Reason: Dataset too small for ML forecasting (0 labels). Runtime fallback is heuristic_unvalidated (uncalibrated, not a validated Maharashtra ETL). Do not fabricate ML skill.
 Date: 2026-08-31
 ```
 

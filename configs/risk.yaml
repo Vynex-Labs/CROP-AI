@@ -1,0 +1,70 @@
+# Risk-forecasting configuration. Coefficients are NOT Maharashtra-validated.
+# MASTER_PROMPT §7 / §27: do not present these as measured outbreak probabilities.
+
+schema_version: "1.0.0"
+model_version: cropai-risk-0.3.0-untrained
+candidate: lightgbm
+alternatives: [xgboost, logistic_baseline, heuristic_unvalidated]
+runtime_default: heuristic_unvalidated
+horizons_days: [1, 3, 7]
+targets: [disease_risk, pest_risk]
+calibration:
+  method: none
+  note: Identity mapping. Do not treat scores as calibrated probabilities.
+
+# Score bins for presentation only — not epidemiological thresholds.
+score_bins:
+  - id: low
+    min: 0.0
+    max: 0.33
+  - id: moderate
+    min: 0.33
+    max: 0.66
+  - id: high
+    min: 0.66
+    max: 1.01
+
+heuristic:
+  status: unvalidated
+  warning: >-
+    Transparent statistical heuristic for offline / missing-data fallback.
+    Not fitted on Maharashtra outbreak labels. Not a validated ETL rule set.
+    Do not report these scores as forecast skill.
+  disease:
+    humidity_weight: 0.35
+    rainfall_7d_weight: 0.25
+    temperature_suitability_weight: 0.15
+    recent_detections_weight: 0.15
+    days_since_outbreak_weight: 0.10
+    humidity_high: 80.0
+    temp_opt_c: 25.0
+    temp_range_c: 12.0
+    rainfall_saturate_mm: 50.0
+  pest:
+    trap_7d_weight: 0.45
+    trap_trend_weight: 0.20
+    temperature_weight: 0.15
+    recent_pest_obs_weight: 0.20
+    trap_saturate_count: 20.0
+  horizon_scale:
+    1: 1.00
+    3: 0.90
+    7: 0.80
+  missing:
+    weather_confidence_penalty: 0.35
+    trap_confidence_penalty: 0.25
+    soil_confidence_penalty: 0.05
+    history_confidence_penalty: 0.10
+  insufficient_inputs_referral: true
+
+missing_data_policy:
+  weather: continue_reduced_confidence
+  soil: continue_record_missing
+  trap: continue_reduce_confidence
+  history: continue_record_missing
+
+training:
+  min_real_labels: 200
+  refuse_if_below_min: true
+  synthetic_smoke_allowed: true
+  never_report_synthetic_as_skill: true
