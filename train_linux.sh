@@ -99,18 +99,29 @@ run_train_risk() {
   "$PYTHON_BIN" "$RISK_PY" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"
 }
 
+run_export() {
+  "$PYTHON_BIN" "$ROOT/scripts/check_env.py" || fail "environment check failed"
+  JOINED="${EXTRA_ARGS[*]-}"
+  if [[ "$JOINED" == *"--execute"* ]]; then
+    "$PYTHON_BIN" -m cropai export-models --execute
+  else
+    "$PYTHON_BIN" -m cropai export-models --dry-run
+  fi
+}
+
 case "$STAGE" in
   hardware) run_hardware ;;
   dataset) run_dataset ;;
   train) run_train ;;
   train-risk) run_train_risk ;;
+  export) run_export ;;
   all)
     run_dataset
     run_train
     ;;
   *)
     echo "Unknown stage: $STAGE"
-    echo "Usage: $0 [hardware|dataset|train|train-risk|all]"
+    echo "Usage: $0 [hardware|dataset|train|train-risk|export|all]"
     exit 2
     ;;
 esac

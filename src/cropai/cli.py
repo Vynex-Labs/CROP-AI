@@ -81,6 +81,22 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("benchmark-geo", help="Phase 4.5 comparison plan (no invented scores)")
 
+    p_prof = sub.add_parser("profile-pipeline", help="Time dummy/real e2e path (no invented GPU FPS)")
+    p_prof.add_argument("image")
+    p_prof.add_argument("--crop", default="rice")
+    p_prof.add_argument("--repeats", type=int, default=3)
+
+    p_exp = sub.add_parser("export-models", help="PyTorch→ONNX→TensorRT plan")
+    p_exp.add_argument("--dry-run", action="store_true", default=True)
+    p_exp.add_argument("--execute", action="store_true")
+
+    p_end = sub.add_parser("endurance", help="Short endurance smoke; long durations stay NOT RUN")
+    p_end.add_argument("image")
+    p_end.add_argument("--seconds", type=float, default=2.0)
+    p_end.add_argument("--crop", default="rice")
+
+    sub.add_parser("benchmark-runtime", help="Phase 5.5 comparison plan (no invented scores)")
+
     args = parser.parse_args(argv)
     if args.cmd == "version":
         print(__version__)
@@ -241,6 +257,30 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "benchmark-geo":
         from cropai.geo.benchmark import benchmark_plan
+
+        print(json.dumps(benchmark_plan(), indent=2))
+        return 0
+    if args.cmd == "profile-pipeline":
+        from pathlib import Path
+
+        from cropai.runtime.profile import profile_pipeline
+
+        print(json.dumps(profile_pipeline(Path(args.image), crop=args.crop, repeats=args.repeats).to_dict(), indent=2))
+        return 0
+    if args.cmd == "export-models":
+        from cropai.runtime.export_plan import run_export
+
+        print(json.dumps(run_export(dry_run=not args.execute), indent=2))
+        return 0
+    if args.cmd == "endurance":
+        from pathlib import Path
+
+        from cropai.runtime.endurance import run_endurance
+
+        print(json.dumps(run_endurance(Path(args.image), seconds=args.seconds, crop=args.crop), indent=2))
+        return 0
+    if args.cmd == "benchmark-runtime":
+        from cropai.runtime.benchmark import benchmark_plan
 
         print(json.dumps(benchmark_plan(), indent=2))
         return 0

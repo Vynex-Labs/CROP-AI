@@ -4,9 +4,9 @@ Primary handoff / state document. If this file disagrees with `MASTER_PROMPT.md`
 
 ## Current phase
 
-**Phase 4 complete (code). Stopped at Phase 4.5 verification gate. Hotspots/fusion UNVALIDATED. No GNN. Chemicals blocked.**
+**Phase 5 complete (code). Stopped at Phase 5.5 verification gate. No ONNX/TRT export. GPU metrics NOT MEASURED. INT8 not adopted.**
 
-Next action: user chooses PROCEED to Phase 5 (deployment infrastructure) and/or supplies labeled observations. Do not treat H3+KDE/DBSCAN as a measured winner.
+Next action: user chooses PROCEED to Phase 6 (final validation harness — will report NOT VERIFIED) and/or runs GPU export/profile on the RTX 4050.
 
 ## Completed work
 
@@ -26,6 +26,8 @@ Next action: user chooses PROCEED to Phase 5 (deployment infrastructure) and/or 
 - pytest risk tests
 - Phase 4 hotspots (DBSCAN+KDE+decay), weighted fusion, structured advisory
 - pytest geo + advisory tests
+- Phase 5 runtime selector, bounded queue, dummy profiler, export/endurance harness
+- pytest runtime tests
 
 ## Pending work
 
@@ -38,6 +40,8 @@ Next action: user chooses PROCEED to Phase 5 (deployment infrastructure) and/or 
 - Measured Phase 3.5 model comparison
 - Labeled hotspot evaluation
 - Official dashboard / farmer UI
+- Measured ONNX/TensorRT/FP16 on RTX 4050
+- Phase 6 final field validation
 - All later phases
 
 ## Architecture
@@ -46,7 +50,7 @@ Working hypothesis only (MASTER_PROMPT §2). See README.md. No weights.
 
 ## Decisions
 
-See `phase1.md`–`phase4.md`. No model selected. Fusion runtime is weighted_deterministic. IPM chemicals blocked.
+See `phase1.md`–`phase5.md`. No model selected. Runtime is dummy. INT8 not adopted. FP16 is policy only.
 
 ## Commands
 
@@ -60,9 +64,12 @@ PYTHONPATH=src python -m cropai forecast-risk --crop rice --humidity 90 --synthe
 PYTHONPATH=src python -m cropai.risk.train --dry-run
 PYTHONPATH=src python -m cropai advise --crop rice --disease rice_blast --confidence 0.9
 PYTHONPATH=src python -m cropai benchmark-geo
+PYTHONPATH=src python -m cropai export-models --dry-run
+PYTHONPATH=src python -m cropai benchmark-runtime
 PYTHONPATH=src pytest
 ./train_linux.sh train --dry-run
 ./train_linux.sh train-risk --dry-run
+./train_linux.sh export
 ```
 
 ## Known issues
@@ -74,6 +81,7 @@ PYTHONPATH=src pytest
 - `src/cropai/vision/` exists; backends are dummy until checkpoints exist
 - `src/cropai/risk/` exists; LightGBM unselected; heuristic is unvalidated / uncalibrated
 - `src/cropai/geo/` `fusion/` `advisory/` exist; h3 package missing (grid fallback); IPM placeholder
+- `src/cropai/runtime/` exists; dummy path only; no engines
 
 ## Requirement traceability
 
@@ -110,12 +118,12 @@ Status key: `[ ]` NOT STARTED · `[~]` IN PROGRESS · `[x]` IMPLEMENTED · `[T]`
 | Advisory engine (structured, no gen override) | `src/cropai/advisory/` | tests/advisory | [T] |
 | Expert referral thresholds | crop_config confidence_thresholds | taxonomy test | [x] |
 | Follow-up monitoring store | ObservationStore.follow_ups | store test | [T] |
-| Multilingual presentation layer | languages listed en/hi/mr | — | [ ] |
+| Multilingual presentation layer | advisory/i18n.py labels en/hi/mr | tests/advisory | [~] labels only |
 | Offline diagnosis | PerceptionPipeline dummy path (no network) | infer test | [~] |
 | Failure handling policies | preprocess reject + pipeline catch | vision tests | [T] |
 | Official dashboard | — | — | [ ] |
 | Farmer / extension UI | — | — | [ ] |
-| ONNX / TensorRT / FP16 path | `vision/export.py` + configs | — | [~] code / [P] run |
+| ONNX / TensorRT / FP16 path | `runtime/export_plan.py` + `vision/export.py` | tests/runtime | [T] harness / [P] real export |
 | Reproducible run metadata | `vision/run_meta.py` | dry-run | [x] |
 | Benchmarks (acc, F1, mAP, FPS, …) | — | — | [ ] |
 | No invented pesticide dosage | knowledge/ipm + engine rules | — | [x] |

@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-31
 
-Latest local run: **60 passed** (`.venv/bin/python -m pytest -q`).
+Latest local run: **66 passed** (`.venv/bin/python -m pytest -q`).
 
 ## How to run
 
@@ -25,11 +25,12 @@ PYTHONPATH=src pytest
 | Risk engine | `tests/risk/test_risk_engine.py` | IMPLEMENTED (untrained) |
 | Geospatial hotspots | `tests/geo/test_hotspots.py` | IMPLEMENTED (synthetic scenarios) |
 | Advisory / referral | `tests/advisory/test_advisory.py` | IMPLEMENTED |
+| Runtime / export / endurance | `tests/runtime/test_runtime.py` | IMPLEMENTED (dummy) |
 | Field robustness | — | NOT STARTED (needs field images) |
 | Missing-data (risk) | weather/trap absence → reduced confidence, continues | IMPLEMENTED (synthetic) |
 | Failure handling | invalid image missing-file validator + vision reject | PARTIAL |
 | Regression | pytest on each change | IN PROGRESS |
-| Performance / long-run | — | NOT STARTED (Phase 5) |
+| Performance / long-run | endurance smoke; 5–60 min NOT RUN | HARNESS ONLY |
 | Final validation | — | NOT STARTED (Phase 6) |
 
 ## Dataset validation (product code, not only tests)

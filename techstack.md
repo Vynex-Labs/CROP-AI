@@ -44,7 +44,7 @@ To be installed by the user on the RTX 4050 machine. Exact versions must be reco
 | heuristic_unvalidated | risk runtime fallback | IMPLEMENTED (uncalibrated) |
 | H3 | spatial index | CODE present; package **not installed**; grid fallback used |
 | scikit-learn DBSCAN/KDE | geospatial | NOT USED — pure-Python DBSCAN + KDE |
-| ONNX / ONNX Runtime / TensorRT | export | NOT IMPLEMENTED |
+| ONNX / ONNX Runtime / TensorRT | export | CODE present; packages **not installed**; **no engines** |
 | FastAPI | API | NOT IMPLEMENTED |
 
 See `requirements-train.txt` and `configs/training.yaml`.

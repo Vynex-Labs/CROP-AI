@@ -40,3 +40,19 @@ def export_ultralytics_onnx(weights: Path, out_path: Path | None = None) -> dict
     model = YOLO(str(weights))
     exported = model.export(format="onnx")
     return {"ok": True, "path": str(exported), "requested": str(out_path) if out_path else None}
+
+
+def export_tensorrt_fp16(onnx_path: Path, engine_path: Path) -> dict[str, Any]:
+    """TensorRT only when CUDA + tensorrt are present. Never fake an .engine."""
+    try:
+        import tensorrt  # noqa: F401
+    except Exception as exc:
+        return {"ok": False, "reason": f"tensorrt_unavailable:{exc}"}
+    if not Path(onnx_path).exists():
+        return {"ok": False, "reason": "onnx_missing"}
+    return {
+        "ok": False,
+        "reason": "tensorrt_builder_not_wired_without_cuda_engine_job",
+        "onnx": str(onnx_path),
+        "engine": str(engine_path),
+    }

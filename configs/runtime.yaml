@@ -1,0 +1,46 @@
+# Edge-runtime policy. Latencies here are budgets, not measurements.
+schema_version: "1.0.0"
+model_version: cropai-runtime-0.5.0-untrained
+
+precision:
+  training_baseline: fp32
+  gpu_target: fp16
+  int8:
+    adopted: false
+    requires:
+      - reliable_calibration
+      - acceptable_accuracy_degradation
+      - measured_speedup
+    status: NOT ADOPTED
+
+runtimes:
+  preferred: [tensorrt, onnxruntime, pytorch, dummy]
+  fallback_order: [tensorrt, onnxruntime, pytorch, dummy]
+  note: >-
+    Select the first available runtime that has weights. Dummy is the sandbox
+    path. Do not report dummy timings as YOLO/EfficientNet performance.
+
+warmup:
+  images: 2
+  required_before_benchmark: true
+
+queue:
+  maxsize: 8
+  policy_when_full: reject
+  drop_oldest: false
+
+export:
+  opset: 17
+  formats: [pytorch, onnx]
+  tensorrt: when_cuda_and_engine_build_supported
+  dynamic_batch: true
+
+endurance:
+  smoke_seconds: 2
+  official_minutes: [5, 15, 30, 60]
+  refuse_to_claim_unrun_durations: true
+
+profiling:
+  record_rss: true
+  record_gpu: when_nvidia_smi
+  never_invent_gpu_util: true

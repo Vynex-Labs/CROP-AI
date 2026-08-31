@@ -1,5 +1,66 @@
 # AGENT_REVIEW.md
 
+## Phase 5 / 5.5 — 2026-08-31
+
+### Attempted work
+
+- Runtime selector (TensorRT → ORT → PyTorch → dummy)
+- Bounded queue, cache, warmup, timed e2e session
+- Export dry-run, dummy profiler, endurance smoke
+- Phase 5.5 honesty harness
+
+### Completed work
+
+- Dummy selected without weights
+- Queue rejects when full (no unbounded growth)
+- Export plan does not invent ONNX/TRT success
+- Dummy profile omits FPS so it cannot be quoted as YOLO throughput
+- Endurance 0.6s marks 5/15/30/60 min **NOT RUN**
+- INT8 **not adopted**
+- pytest **66 passed**
+
+### Failed work
+
+- Actual ONNX export (no torch, no checkpoints)
+- TensorRT FP16 engine
+- GPU util / VRAM / thermal
+- 5+ minute endurance
+
+### Benchmark results
+
+Dummy-path smoke only. **Not** a deployment benchmark.
+
+```
+Measured performance: dummy smoke; YOLO/TRT/ORT NOT MEASURED
+Bottleneck: UNKNOWN
+Optimization applied: none
+Remaining issues: no checkpoints, no CUDA, no TensorRT, INT8 not adopted, 1-hour test not run
+```
+
+### Agent Confidence: 70/100 (code) / 0/100 (deployed performance)
+
+Why this confidence:
+
+- Fallback order and INT8 policy match §9.
+- Dummy timings cannot be mistaken for model FPS in the report object.
+- Long-run keys stay NOT RUN unless actually run.
+
+Remaining uncertainty:
+
+- TensorRT builder API untested.
+- ORT IO binding untested.
+- Dummy e2e includes quality-reject on tiny PNGs.
+
+Better alternatives considered:
+
+- Quote dummy 200 ms as “real-time” — rejected (§27).
+- Adopt INT8 from literature — rejected.
+- Optimize dummy queue — rejected (§26).
+
+Recommendation: **PROCEED** to Phase 6 final-validation *harness* (honest NOT VERIFIED). Do not claim SIH success.
+
+---
+
 ## Phase 4 / 4.5 — 2026-08-31
 
 ### Attempted work
@@ -333,4 +394,4 @@ Do **not** silently start Phase 2 until the user answers.
 
 ## Later phases
 
-Phase 5–6 reviews: not written (phases not started).
+Phase 6 review: not written (phase not started).

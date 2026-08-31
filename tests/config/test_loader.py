@@ -4,6 +4,7 @@ from cropai.config.loader import (
     load_geo_config,
     load_inference_config,
     load_risk_config,
+    load_runtime_config,
     load_training_config,
 )
 
@@ -25,3 +26,9 @@ def test_core_yaml_loads():
     assert risk["candidate"] == "lightgbm"
     assert risk["runtime_default"] == "heuristic_unvalidated"
     assert risk["calibration"]["method"] == "none"
+    geo = load_geo_config()
+    assert geo["fusion"]["candidate"] == "weighted_deterministic"
+    assert geo["gnn"]["allowed"] is False
+    runtime = load_runtime_config()
+    assert runtime["precision"]["int8"]["adopted"] is False
+    assert runtime["precision"]["gpu_target"] == "fp16"

@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 rem CROP-AI training / dataset entrypoint (cmd.exe and PowerShell).
-rem Usage: train_windows.bat [hardware|dataset|train|train-risk|all]
+rem Usage: train_windows.bat [hardware|dataset|train|train-risk|export|all]
 
 cd /d "%~dp0"
 set "CROP_AI_ROOT=%CD%"
@@ -36,9 +36,10 @@ if /I "%STAGE%"=="hardware" goto HARDWARE
 if /I "%STAGE%"=="dataset" goto DATASET
 if /I "%STAGE%"=="train" goto TRAIN
 if /I "%STAGE%"=="train-risk" goto TRAINRISK
+if /I "%STAGE%"=="export" goto EXPORT
 if /I "%STAGE%"=="all" goto DATASET
 echo Unknown stage: %STAGE%
-echo Usage: train_windows.bat [hardware^|dataset^|train^|train-risk^|all]
+echo Usage: train_windows.bat [hardware^|dataset^|train^|train-risk^|export^|all]
 exit /b 2
 
 :HARDWARE

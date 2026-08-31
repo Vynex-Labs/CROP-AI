@@ -12,7 +12,7 @@ This is **not** a single-image classifier demo. Authoritative specification: [`M
 
 | Item | State |
 | --- | --- |
-| Phase | **4 complete (code) → stopped at Phase 4.5. Models NOT TRAINED** |
+| Phase | **5 complete (code) → stopped at Phase 5.5. No ONNX/TRT. GPU NOT MEASURED** |
 | Perception models | Code + dummy backends. Candidates not selected. |
 | Risk models | Heuristic fallback only. LightGBM **not selected**. |
 | Geospatial / fusion | DBSCAN+KDE+decay + weighted fusion. **Unvalidated.** |
@@ -126,6 +126,17 @@ python -m cropai benchmark-geo
 ```
 
 Advisory never invents pesticide dose. Placeholder IPM → monitoring + extension referral.
+
+Runtime / export (dummy path in this sandbox):
+
+```bash
+python -m cropai export-models --dry-run
+python -m cropai benchmark-runtime
+python -m cropai profile-pipeline path.jpg --repeats 3
+./train_linux.sh export
+```
+
+Dummy timings are **not** YOLO/TensorRT FPS. INT8 is **not adopted**.
 
 ## Documentation map
 
