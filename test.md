@@ -2,7 +2,7 @@
 
 Last updated: 2026-08-31
 
-Latest local run: **69 passed** (`.venv/bin/python -m pytest -q`).
+Latest local run: **69 passed** (2026-09-01, `.venv/bin/python -m pytest -v --tb=short`, 8.59 s). Full case list: [`tests.md`](tests.md).
 
 ## How to run
 
